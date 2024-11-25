@@ -1,5 +1,9 @@
 #pragma once
-class draw
-{
+class Draw {
+public:
+	Draw();
+	~Draw();
+
+	static GLvoid DrawScene();
 };
 
