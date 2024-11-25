@@ -1,15 +1,15 @@
 #include "pch.h"
-#include "Draw.h"
+#include "Renderer.h"
 
-Draw::Draw()
+Renderer::Renderer()
 {
 }
 
-Draw::~Draw()
+Renderer::~Renderer()
 {
 }
 
-GLvoid Draw::DrawScene()
+GLvoid Renderer::RenderScene()
 {
 	glClearColor(0.0f, 1.0f, 1.0f, 1.0f); 
 	glClear(GL_COLOR_BUFFER_BIT); 
