@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Draw.h"
+#include "Renderer.h"
 GLuint shaderProgramID;
 GLuint vertexShader;
 GLuint fragmentShader;
@@ -15,8 +15,8 @@ int main(int argc, char** argv) {
 	fragmentShader = sh.CreateFragmentShader("FragmentShader.glsl");	//FS ÆÄÀÏ¸í
 	shaderProgramID = sh.CreateShaderProgram(vertexShader, fragmentShader);
 
-	Draw draw;
-	glutDisplayFunc(draw.DrawScene);
+	Renderer draw;
+	glutDisplayFunc(draw.RenderScene);
 
 	glutMainLoop();
 }

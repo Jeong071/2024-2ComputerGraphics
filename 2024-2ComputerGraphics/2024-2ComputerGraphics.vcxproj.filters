@@ -27,9 +27,6 @@
     <ClCompile Include="pch.cpp">
       <Filter>pch</Filter>
     </ClCompile>
-    <ClCompile Include="draw.cpp">
-      <Filter>Scene</Filter>
-    </ClCompile>
     <ClCompile Include="Timer.cpp">
       <Filter>Utils</Filter>
     </ClCompile>
@@ -54,6 +51,9 @@
     <ClCompile Include="main.cpp">
       <Filter>Client</Filter>
     </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="InputManager.h">
@@ -61,9 +61,6 @@
     </ClInclude>
     <ClInclude Include="pch.h">
       <Filter>pch</Filter>
-    </ClInclude>
-    <ClInclude Include="draw.h">
-      <Filter>Scene</Filter>
     </ClInclude>
     <ClInclude Include="Timer.h">
       <Filter>Utils</Filter>
@@ -85,6 +82,9 @@
     </ClInclude>
     <ClInclude Include="Initialize.h">
       <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -1,9 +1,9 @@
 #pragma once
-class Draw {
+class Renderer {
 public:
-	Draw();
-	~Draw();
+	Renderer();
+	~Renderer();
 
-	static GLvoid DrawScene();
+	static GLvoid RenderScene();
 };
 
