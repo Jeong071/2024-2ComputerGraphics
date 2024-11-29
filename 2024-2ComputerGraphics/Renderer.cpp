@@ -10,8 +10,8 @@ Renderer::Renderer() {
 	shaderProgramID = sh.CreateShaderProgram(vertexShader, fragmentShader);
 }
 
-Renderer::~Renderer()
-{
+Renderer::~Renderer() {
+
 }
 
 GLvoid Renderer::RenderScene()

@@ -1,4 +1,5 @@
 #pragma once
+
 class Renderer {
 public:
 	Renderer();
@@ -9,4 +10,3 @@ public:
 private:
 	static GLuint shaderProgramID;
 };
-

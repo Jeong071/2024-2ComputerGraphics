@@ -3,7 +3,7 @@
 //버퍼 바인드 및 정점 저장
 
 Cube::Cube() {
-    float vertices[] = {
+    float cubeVertices[] = {
         // positions          // normals
         -0.5f, -0.5f, -0.5f,   0.0f,  0.0f, -1.0f,  // Front face
          0.5f, -0.5f, -0.5f,   0.0f,  0.0f, -1.0f,
@@ -35,7 +35,7 @@ Cube::Cube() {
          0.5f,  0.5f,  0.5f,   0.0f,  1.0f,  0.0f,
         -0.5f,  0.5f,  0.5f,   0.0f,  1.0f,  0.0f,
     };
-    unsigned int indices[] = {
+    unsigned int cubeIndices[] = {
         0, 1, 2, 0, 2, 3,   // Front
         4, 5, 6, 4, 6, 7,   // Back
         8, 9, 10, 8, 10, 11, // Left
@@ -50,10 +50,20 @@ Cube::Cube() {
 
     glBindVertexArray(this->VAO);
     glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
+    // 큐브 VAO 및 VBO 설정
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
