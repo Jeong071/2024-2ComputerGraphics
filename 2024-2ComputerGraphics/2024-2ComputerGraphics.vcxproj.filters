@@ -87,4 +87,12 @@
       <Filter>Scene</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="VertexShader.glsl">
+      <Filter>Resource</Filter>
+    </None>
+    <None Include="FragmentShader.glsl">
+      <Filter>Resource</Filter>
+    </None>
+  </ItemGroup>
 </Project>
