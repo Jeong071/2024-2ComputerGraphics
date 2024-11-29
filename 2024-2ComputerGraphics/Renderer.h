@@ -5,5 +5,8 @@ public:
 	~Renderer();
 
 	static GLvoid RenderScene();
+
+private:
+	static GLuint shaderProgramID;
 };
 
