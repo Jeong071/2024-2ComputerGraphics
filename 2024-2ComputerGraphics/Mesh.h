@@ -1,5 +1,11 @@
 #pragma once
-class Mesh
-{
+class Cube {
+    public:
+        unsigned int VAO, VBO, EBO;
+
+        Cube();
+        ~Cube();
+
+        void draw();
 };
 

@@ -16,3 +16,6 @@
 
 #include "Initialize.h"
 #include "Shader.h"
+#include "Mesh.h"
+#include "Camera.h"
+#include "Mesh.h"
