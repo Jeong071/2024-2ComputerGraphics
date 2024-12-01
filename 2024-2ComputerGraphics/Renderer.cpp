@@ -41,15 +41,11 @@ GLvoid Renderer::RenderScene()
 	glUniformMatrix3fv(glGetUniformLocation(shaderProgramID, "normalMatrix"), 1, GL_FALSE, glm::value_ptr(normalMatrix));
 
 	Cube d;
-	d.draw();
-
-	
+	d.draw();	
 	
 	glm::mat4 playerMat = glm::mat4(1.0f);
 	playerMat = glm::scale(playerMat, glm::vec3(0.3f, 0.3f, 0.3f));
-	playerMat = glm::translate(playerMat, glm::vec3(gInput.GetPlayerXPos(), gInput.GetPlayerYPos(), gInput.GetPlayerZPos()));
-
-	
+	playerMat = glm::translate(playerMat, glm::vec3(gInput.GetPlayerXPos(), gInput.GetPlayerYPos(), gInput.GetPlayerZPos()));	
 	
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(playerMat));
 
