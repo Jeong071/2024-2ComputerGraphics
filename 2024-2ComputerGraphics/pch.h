@@ -12,6 +12,7 @@
 #include <glm/glm.hpp>
 #include <glm/ext.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <sstream>
 
 
 #include "Initialize.h"
@@ -19,3 +20,17 @@
 #include "Mesh.h"
 #include "Camera.h"
 #include "Mesh.h"
+#include "Model.h"
+#include "InputManager.h"
+
+extern GLuint shaderProgramID;
+extern GLuint vertexShader;
+extern GLuint fragmentShader;
+
+
+
+extern Model gModel;
+extern InputManager gInput;
+
+#define PLAYER_SPEED 0.1
+
