@@ -1,14 +1,13 @@
 #include "pch.h"
 #include "Renderer.h"
+#include "Shader.h"
 
 GLuint Renderer::shaderProgramID = 0;
 Camera gCamera;
+float playerAngle {0.0f};
 
 Renderer::Renderer() {
-	Shader sh;
-	GLuint vertexShader = sh.CreateVertexShader("VertexShader.glsl");
-	GLuint fragmentShader = sh.CreateFragmentShader("FragmentShader.glsl");
-	shaderProgramID = sh.CreateShaderProgram(vertexShader, fragmentShader);
+	
 }
 
 Renderer::~Renderer() {
@@ -24,6 +23,13 @@ GLvoid Renderer::RenderScene()
 	//				Draw Code			      //
 	//										  //
 	////////////////////////////////////////////
+
+	if (isVirtualMouse) {
+		glutSetCursor(GLUT_CURSOR_NONE);
+	}
+	else {
+		glutSetCursor(GLUT_CURSOR_LEFT_ARROW);
+	}
 
 	glUseProgram(shaderProgramID);
 
@@ -46,23 +52,15 @@ GLvoid Renderer::RenderScene()
 	d.draw();	
 	
 	glm::mat4 playerMat = glm::mat4(1.0f);
-
+	
+	
 	
 	playerMat = glm::translate(playerMat, glm::vec3(
 		gInput.GetPlayerXPos(),
 		gInput.GetPlayerYPos(),
 		gInput.GetPlayerZPos()
 	));
-
-	playerMat = glm::scale(playerMat, glm::vec3(0.3f, 0.3f, 0.3f));
-
-	GLint modelLoc = glGetUniformLocation(shaderProgramID, "model");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(playerMat));
-
-
-	//사용할때 주석 풀기
-	gModel.BindBuffer();
-	gModel.RenderPlayer();
+	playerMat = rotate(playerMat, glm::radians(playerAngle), glm::vec3(0.0, rotateYAxis, 0.0));
 
 	gCamera.SetCameraPos(
 		gInput.GetPlayerXPos(),
@@ -75,9 +73,23 @@ GLvoid Renderer::RenderScene()
 		gInput.GetPlayerZPos()
 	);
 
-	// 뷰 행렬 계산 및 셰이더에 전달
+
+	GLint modelLoc = glGetUniformLocation(shaderProgramID, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(playerMat));
+
 	view = gCamera.getViewMatrix();
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+	//사용할때 주석 풀기
+	gModel.BindBuffer();
+	gModel.RenderPlayer();
 
 	glutSwapBuffers();
+}
+
+void Renderer::CreateShader()
+{
+	Shader sh;
+	GLuint vertexShader = sh.CreateVertexShader("VertexShader.glsl");
+	GLuint fragmentShader = sh.CreateFragmentShader("FragmentShader.glsl");
+	shaderProgramID = sh.CreateShaderProgram(vertexShader, fragmentShader);
 }

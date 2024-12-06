@@ -7,6 +7,8 @@ public:
 
     glm::mat4 getViewMatrix() const;
     glm::mat4 getProjectionMatrix(float width, float height) const;
+    glm::vec3 GetTarget() const;
+    glm::vec3 GetCameraPos() const;
 
     void SetCameraPos(float x, float y, float z);
     void SetCameraTarget(float x, float y, float z);

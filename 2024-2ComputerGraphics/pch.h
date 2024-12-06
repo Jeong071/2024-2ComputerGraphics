@@ -23,6 +23,7 @@
 #include "Model.h"
 #include "InputManager.h"
 
+
 extern GLuint shaderProgramID;
 extern GLuint vertexShader;
 extern GLuint fragmentShader;
@@ -33,7 +34,13 @@ extern Model gModel;
 extern InputManager gInput;
 extern Camera gCamera;
 
-#define PLAYER_SPEED	0.08
+extern bool isVirtualMouse;
+extern float playerAngle;
+extern glm::mat4 rotationMatrix;
+extern glm::vec3 rotationAxis;
+extern float rotateYAxis;
+#define PLAYER_SPEED	0.1
 #define WIDTH			1280
 #define HEIGHT			960
-
+#define SENSITIVITY		0.15
+#define DISTANCE		6
