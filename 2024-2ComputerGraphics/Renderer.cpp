@@ -2,6 +2,7 @@
 #include "Renderer.h"
 
 GLuint Renderer::shaderProgramID = 0;
+Camera gCamera;
 
 Renderer::Renderer() {
 	Shader sh;
@@ -27,10 +28,11 @@ GLvoid Renderer::RenderScene()
 	glUseProgram(shaderProgramID);
 
 	//카메라 설정
-	Camera camera;
-	glm::mat4 view = camera.getViewMatrix();
-	glm::mat4 projection = camera.getProjectionMatrix(1280, 960);
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "view"), 1, GL_FALSE, glm::value_ptr(view));
+	glm::mat4 view = gCamera.getViewMatrix();
+	GLint viewLoc = glGetUniformLocation(shaderProgramID, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+	glm::mat4 projection = gCamera.getProjectionMatrix(1280, 960);
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 
 	//일단 큐브 하나
@@ -44,14 +46,38 @@ GLvoid Renderer::RenderScene()
 	d.draw();	
 	
 	glm::mat4 playerMat = glm::mat4(1.0f);
-	playerMat = glm::scale(playerMat, glm::vec3(0.3f, 0.3f, 0.3f));
-	playerMat = glm::translate(playerMat, glm::vec3(gInput.GetPlayerXPos(), gInput.GetPlayerYPos(), gInput.GetPlayerZPos()));	
+
 	
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(playerMat));
+	playerMat = glm::translate(playerMat, glm::vec3(
+		gInput.GetPlayerXPos(),
+		gInput.GetPlayerYPos(),
+		gInput.GetPlayerZPos()
+	));
+
+	playerMat = glm::scale(playerMat, glm::vec3(0.3f, 0.3f, 0.3f));
+
+	GLint modelLoc = glGetUniformLocation(shaderProgramID, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(playerMat));
+
 
 	//사용할때 주석 풀기
 	gModel.BindBuffer();
 	gModel.RenderPlayer();
+
+	gCamera.SetCameraPos(
+		gInput.GetPlayerXPos(),
+		gInput.GetPlayerYPos(),
+		gInput.GetPlayerZPos()
+	);
+	gCamera.SetCameraTarget(
+		gInput.GetPlayerXPos(),
+		gInput.GetPlayerYPos(),
+		gInput.GetPlayerZPos()
+	);
+
+	// 뷰 행렬 계산 및 셰이더에 전달
+	view = gCamera.getViewMatrix();
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
 	glutSwapBuffers();
 }

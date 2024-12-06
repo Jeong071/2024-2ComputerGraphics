@@ -16,13 +16,10 @@ GLvoid InputManager::Key(unsigned char key, int x, int y)
 	if (key == 'd') {
 		mPlayerXPos += PLAYER_SPEED;
 	}
-	if (key == 'r') {
-		mPlayerYPos += PLAYER_SPEED;
-	}
-	if (key == 'f') {
-		mPlayerYPos -= PLAYER_SPEED;
-	}
+	
 	
 
 	glutPostRedisplay();
 }
+
+

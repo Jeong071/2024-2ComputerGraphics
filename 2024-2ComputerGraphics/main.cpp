@@ -11,7 +11,7 @@ Model gModel;
 
 int main(int argc, char** argv) {
 	glutInit(&argc, argv);
-	Initialize init(0,0,1280,960);
+	Initialize init(0,0,WIDTH,HEIGHT);
 	init.GLEWInit();
 
 	gModel.ParseObj("Ghost.obj");

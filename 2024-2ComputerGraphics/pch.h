@@ -31,6 +31,9 @@ extern GLuint fragmentShader;
 
 extern Model gModel;
 extern InputManager gInput;
+extern Camera gCamera;
 
-#define PLAYER_SPEED 0.1
+#define PLAYER_SPEED	0.08
+#define WIDTH			1280
+#define HEIGHT			960
 
