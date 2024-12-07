@@ -3,38 +3,51 @@
 //버퍼 바인드 및 정점 저장
 
 Cube::Cube() {
+    setupMesh();
+    updateModelMatrix();
+    updateBounds();
+}
+
+Cube::~Cube() {
+    glDeleteVertexArrays(1, &this->VAO);
+    glDeleteBuffers(1, &this->VBO);
+    glDeleteBuffers(1, &this->EBO);
+}
+
+void Cube::setupMesh() {
     float cubeVertices[] = {
-        // positions          // normals
-        -0.5f, -0.5f, -0.5f,   0.0f,  0.0f, -1.0f,  // Front face
-         0.5f, -0.5f, -0.5f,   0.0f,  0.0f, -1.0f,
-         0.5f,  0.5f, -0.5f,   0.0f,  0.0f, -1.0f,
-        -0.5f,  0.5f, -0.5f,   0.0f,  0.0f, -1.0f,
+        // positions          // normals           // texture coords
+        -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,
 
-        -0.5f, -0.5f,  0.5f,   0.0f,  0.0f,  1.0f,  // Back face
-         0.5f, -0.5f,  0.5f,   0.0f,  0.0f,  1.0f,
-         0.5f,  0.5f,  0.5f,   0.0f,  0.0f,  1.0f,
-        -0.5f,  0.5f,  0.5f,   0.0f,  0.0f,  1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f, 1.0f,
 
-        -0.5f, -0.5f, -0.5f,  -1.0f,  0.0f,  0.0f,  // Left face
-        -0.5f,  0.5f, -0.5f,  -1.0f,  0.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f,  -1.0f,  0.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f,  -1.0f,  0.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+        -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-         0.5f, -0.5f, -0.5f,   1.0f,  0.0f,  0.0f,  // Right face
-         0.5f,  0.5f, -0.5f,   1.0f,  0.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,   1.0f,  0.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,   1.0f,  0.0f,  0.0f,
+         0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,
+         0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,
+         0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,
 
-        -0.5f, -0.5f, -0.5f,   0.0f, -1.0f,  0.0f,  // Bottom face
-         0.5f, -0.5f, -0.5f,   0.0f, -1.0f,  0.0f,
-         0.5f, -0.5f,  0.5f,   0.0f, -1.0f,  0.0f,
-        -0.5f, -0.5f,  0.5f,   0.0f, -1.0f,  0.0f,
+        -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,
+         0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,
+         0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,
+        -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,
 
-        -0.5f,  0.5f, -0.5f,   0.0f,  1.0f,  0.0f,  // Top face
-         0.5f,  0.5f, -0.5f,   0.0f,  1.0f,  0.0f,
-         0.5f,  0.5f,  0.5f,   0.0f,  1.0f,  0.0f,
-        -0.5f,  0.5f,  0.5f,   0.0f,  1.0f,  0.0f,
+        -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
+         0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
+         0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
     };
+
     unsigned int cubeIndices[] = {
         0, 1, 2, 0, 2, 3,   // Front
         4, 5, 6, 4, 6, 7,   // Back
@@ -44,16 +57,6 @@ Cube::Cube() {
         20, 21, 22, 20, 22, 23  // Top
     };
 
-    glGenVertexArrays(1, &this->VAO);
-    glGenBuffers(1, &this->VBO);
-    glGenBuffers(1, &this->EBO);
-
-    glBindVertexArray(this->VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
     // 큐브 VAO 및 VBO 설정
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -65,23 +68,36 @@ Cube::Cube() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0); // 위치
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))); // 법선
     glEnableVertexAttribArray(1);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-}
-
-Cube::~Cube() {
-    glDeleteVertexArrays(1, &this->VAO);
-    glDeleteBuffers(1, &this->VBO);
-    glDeleteBuffers(1, &this->EBO);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))); // 텍스처 좌표
+    glEnableVertexAttribArray(2);
 }
 
 void Cube::draw() {
-    glBindVertexArray(this->VAO);
+    glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 }
+
+void Cube::updateModelMatrix() {
+    modelMatrix = glm::mat4(1.0f);
+    modelMatrix = glm::translate(modelMatrix, position);
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(rotationAngle), rotationAxis);
+    modelMatrix = glm::scale(modelMatrix, scale);
+}
+
+void Cube::updateBounds() {
+    glm::vec3 localMin = glm::vec3(-0.5f, -0.5f, -0.5f) * scale;
+    glm::vec3 localMax = glm::vec3(0.5f, 0.5f, 0.5f) * scale;
+
+    // Transforming the local bounds by the model matrix to get the world-space bounds
+    glm::vec4 worldMin = modelMatrix * glm::vec4(localMin, 1.0f);
+    glm::vec4 worldMax = modelMatrix * glm::vec4(localMax, 1.0f);
+
+    minPoint = glm::vec3(worldMin.x, worldMin.y, worldMin.z);
+    maxPoint = glm::vec3(worldMax.x, worldMax.y, worldMax.z);
+}
+
