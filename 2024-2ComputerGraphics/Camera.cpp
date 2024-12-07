@@ -6,6 +6,7 @@ Camera::Camera()
     : position(glm::vec3(gInput.GetPlayerXPos() , gInput.GetPlayerYPos(), gInput.GetPlayerZPos())), 
     target(normalize(glm::vec3(2 * gInput.GetPlayerXPos() - position[0],gInput.GetPlayerYPos(),2 * gInput.GetPlayerZPos() - position[2]))), 
     upDirection(glm::vec3(0.0f, 1.0f, 0.0f)) {
+
 }
 
 Camera::~Camera() {
