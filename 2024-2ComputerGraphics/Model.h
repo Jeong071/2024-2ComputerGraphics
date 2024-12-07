@@ -16,10 +16,10 @@ public:
 
 	GLuint GetVAO(std::string name);
 	GLuint* GetVBO(std::string name);
-	
-
 	int GetVertexCount() { return mPlayerVertices.size(); }
+
 	void RenderPlayer();
+	void ReleaseBuffer();
 
 	void PrintInfo(); //저장 여부 디버그용 함수
 

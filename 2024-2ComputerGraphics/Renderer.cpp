@@ -79,10 +79,17 @@ GLvoid Renderer::RenderScene()
 
 	view = gCamera.getViewMatrix();
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+	GLint uniformColorLocation = glGetUniformLocation(shaderProgramID, "objectColor");
+	glm::vec3 customColor(0.0f, 1.0f, 1.0f);
+	glUniform3fv(uniformColorLocation, 1, glm::value_ptr(customColor));
+
 	//사용할때 주석 풀기
 	gModel.BindBuffer();
 	gModel.RenderPlayer();
 
+	d.DeleteBuffer();
+	gModel.ReleaseBuffer();
 	glutSwapBuffers();
 }
 

@@ -7,5 +7,6 @@ class Cube {
         ~Cube();
 
         void draw();
+        void DeleteBuffer();
 };
 
