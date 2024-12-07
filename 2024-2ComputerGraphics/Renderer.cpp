@@ -27,14 +27,14 @@ GLvoid Renderer::RenderScene()
 
 	glUseProgram(shaderProgramID);
 
-	//Ä«¸Ş¶ó ¼³Á¤
+	//ì¹´ë©”ë¼ ì„¤ì •
 	Camera camera;
 	glm::mat4 view = camera.getViewMatrix();
 	glm::mat4 projection = camera.getProjectionMatrix(1280, 960);
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "view"), 1, GL_FALSE, glm::value_ptr(view));
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
 	
-	//Á¶¸í
+	//ì¡°ëª…
 	glm::vec3 cameraPos = glm::vec3(0.0f, 1.3f, 3.0f); 
 	glm::vec3 lightPos(0.0f, 0.0f, 0.0f);
 	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
@@ -43,18 +43,33 @@ GLvoid Renderer::RenderScene()
 	glUniform3fv(glGetUniformLocation(shaderProgramID, "lightColor"), 1, glm::value_ptr(lightColor));
 	glUniform1i(glGetUniformLocation(shaderProgramID, "lightOn"), lightOn);
 
-	//½ºÅ×ÀÌÁö ±×¸®±â
+	//ìŠ¤í…Œì´ì§€ ê·¸ë¦¬ê¸°
 	RenderStage1();
 	RenderStage2();
 	RenderStage3();
 
+
+  
+	Cube d;
+	d.draw();	
 	
+	glm::mat4 playerMat = glm::mat4(1.0f);
+	playerMat = glm::scale(playerMat, glm::vec3(0.3f, 0.3f, 0.3f));
+	playerMat = glm::translate(playerMat, glm::vec3(gInput.GetPlayerXPos(), gInput.GetPlayerYPos(), gInput.GetPlayerZPos()));	
+	
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(playerMat));
+
+	//ì‚¬ìš©í• ë•Œ ì£¼ì„ í’€ê¸°
+	gModel.BindBuffer();
+	gModel.RenderPlayer();
+
+  
 
 	glutSwapBuffers();
 }
 
 GLvoid Renderer::RenderStage1() {
-	// °´Ã¼ »ö»ó ¼³Á¤
+	// ê°ì²´ ìƒ‰ìƒ ì„¤ì •
 	glm::vec3 objectColor = glm::vec3(1.0f, 0.5f, 0.0f);
 	glUniform3fv(glGetUniformLocation(shaderProgramID, "objectColor"), 1, glm::value_ptr(objectColor));
 
@@ -128,7 +143,7 @@ GLvoid Renderer::RenderStage1() {
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube7.modelMatrix));
 	cube7.draw();
 
-	//Áß¾Ó Áö´ë
+	//ì¤‘ì•™ ì§€ëŒ€
 	Cube cube8;
 	cube8.position = glm::vec3(cube7.position.x + 1.0f, cube7.position.y + 0.0f, cube7.position.z - 2.75f);
 	cube8.scale = glm::vec3(0.5f, 1.0f, 6.0f);
