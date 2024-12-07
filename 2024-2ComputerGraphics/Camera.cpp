@@ -3,7 +3,7 @@
 //카메라 관련
 
 Camera::Camera()
-    : position(glm::vec3(0.0f, 1.3f, 3.0f)), target(glm::vec3(0.0f, 0.0f, 0.0f)), upDirection(glm::vec3(0.0f, 1.0f, 0.0f)) {
+    : position(glm::vec3(0.0f, 15.0f, 0.1f)), target(glm::vec3(0.0f, 0.0f, 0.0f)), upDirection(glm::vec3(0.0f, 1.0f, 0.0f)) {
 }
 
 Camera::~Camera() {
