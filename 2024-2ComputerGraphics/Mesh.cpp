@@ -8,11 +8,7 @@ Cube::Cube() {
     updateBounds();
 }
 
-Cube::~Cube() {
-    glDeleteVertexArrays(1, &this->VAO);
-    glDeleteBuffers(1, &this->VBO);
-    glDeleteBuffers(1, &this->EBO);
-}
+
 
 void Cube::setupMesh() {
     float cubeVertices[] = {
@@ -88,12 +84,6 @@ void Cube::setupMesh() {
     glEnableVertexAttribArray(2);
 }
 
-void Cube::draw() {
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
-}
-
 
 void Cube::updateModelMatrix() {
     modelMatrix = glm::mat4(1.0f);
@@ -112,7 +102,7 @@ void Cube::updateBounds() {
 
     minPoint = glm::vec3(worldMin.x, worldMin.y, worldMin.z);
     maxPoint = glm::vec3(worldMax.x, worldMax.y, worldMax.z);
-
+}
 Cube::~Cube() {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
