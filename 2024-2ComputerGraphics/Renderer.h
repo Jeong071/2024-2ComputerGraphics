@@ -6,6 +6,7 @@ public:
 	~Renderer();
 
 	static GLvoid RenderScene();
+	static void CreateShader();
 
 	static void RenderStage1();
 	static void RenderStage2();

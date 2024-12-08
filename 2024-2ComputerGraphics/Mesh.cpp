@@ -1,8 +1,10 @@
 #include "pch.h"
 #include "Mesh.h"
-//Î≤ÑÌçº Î∞îÏù∏Îìú Î∞è Ï†ïÏ†ê Ï†ÄÏû•
+
+//πˆ∆€ πŸ¿ŒµÂ π◊ ¡§¡° ¿˙¿Â
 
 Cube::Cube() {
+
     setupMesh();
     updateModelMatrix();
     updateBounds();
@@ -53,19 +55,6 @@ void Cube::setupMesh() {
         20, 21, 22, 20, 22, 23  // Top
     };
 
-
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(cubeVertices), cubeVertices, GL_STATIC_DRAW);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
-
-    // ÌÅêÎ∏å VAO Î∞è VBO ÏÑ§Ï†ï
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
@@ -76,11 +65,11 @@ void Cube::setupMesh() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cubeIndices), cubeIndices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0); // ÏúÑÏπò
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0); // ?ÑÏπò
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float))); // Î≤ïÏÑ†
     glEnableVertexAttribArray(1);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))); // ÌÖçÏä§Ï≤ò Ï¢åÌëú
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float))); // ?çÏä§Ï≤?Ï¢åÌëú
     glEnableVertexAttribArray(2);
 }
 
@@ -104,9 +93,7 @@ void Cube::updateBounds() {
     maxPoint = glm::vec3(worldMax.x, worldMax.y, worldMax.z);
 }
 Cube::~Cube() {
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
+    
 }
 
 void Cube::draw() {
@@ -114,5 +101,13 @@ void Cube::draw() {
     glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
 
+}
+
+
+void Cube::DeleteBuffer()
+{
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+    glDeleteBuffers(1, &EBO);
 }
 

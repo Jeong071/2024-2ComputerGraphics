@@ -11,10 +11,13 @@ public:
     Cube();
     ~Cube();
 
-    void draw();
-    void updateModelMatrix(); // 모델 행렬 업데이트
-    void updateBounds();      // 두 점 업데이트
+
+        void draw();
+        void updateModelMatrix(); // 모델 행렬 업데이트
+        void updateBounds();
+        void DeleteBuffer();
 
 private:
     void setupMesh();
 };
+

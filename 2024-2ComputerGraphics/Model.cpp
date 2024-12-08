@@ -159,6 +159,13 @@ void Model::RenderPlayer()
     glBindVertexArray(0);
 }
 
+void Model::ReleaseBuffer()
+{
+    glDeleteVertexArrays(1, &mPlayerVAO);
+    glDeleteBuffers(3, mPlayerVBO);
+    glDeleteBuffers(1, &mPlayerEBO);
+}
+
 //디버깅용 출력 함수
 void Model::PrintInfo()
 {

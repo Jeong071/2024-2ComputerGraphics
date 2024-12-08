@@ -1,5 +1,7 @@
+#define _CRTDBG_MAP_ALLOC
 #include "pch.h"
 #include "Renderer.h"
+
 GLuint shaderProgramID;
 GLuint vertexShader;
 GLuint fragmentShader;
@@ -10,18 +12,21 @@ Model gModel;
 
 
 int main(int argc, char** argv) {
+
 	glutInit(&argc, argv);
-	Initialize init(0,0,1280,960);
+	Initialize init(0, 0, WIDTH, HEIGHT);
 	init.GLEWInit();
 
-	gModel.ParseObj("Ghost.obj");
-	gModel.PrintInfo();
+	gModel.ParseObj("Player.obj");
+	
+    
+	glutWarpPointer(WIDTH / 2, HEIGHT / 2);
 
 	Renderer draw;
+	draw.CreateShader();
 	glutDisplayFunc(draw.RenderScene);
-	InputManager input;
-	glutKeyboardFunc(input.Key);
+    
+	gInput.Run();
 	
-
 	glutMainLoop();
 }
