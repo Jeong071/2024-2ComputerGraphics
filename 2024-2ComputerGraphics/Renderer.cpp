@@ -1,12 +1,45 @@
+#define STB_IMAGE_IMPLEMENTATION
+
 #include "pch.h"
 #include "Renderer.h"
 #include "Shader.h"
 #include "iostream"
+#include "stb_image.h"
 using namespace std;
 
 GLuint Renderer::shaderProgramID = 0;
 Camera gCamera;
 float playerAngle {0.0f};
+
+//텍스처 파일들 - 필요시 계속 추가
+std::vector<std::string>textureFiles = { "floor_texture.jpg" };
+std::vector<GLuint> loadTextures(const std::vector<std::string>& filenames) {
+	std::vector<GLuint> textureIDs;
+	for (const auto& filename : filenames) {
+		int width, height, nrChannels;
+		stbi_set_flip_vertically_on_load(true);
+		unsigned char* data = stbi_load(filename.c_str(), &width, &height, &nrChannels, 4);  // RGBA 포맷 강제
+		if (data) {
+			GLuint textureID;
+			glGenTextures(1, &textureID);
+			glBindTexture(GL_TEXTURE_2D, textureID);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+			glGenerateMipmap(GL_TEXTURE_2D);
+
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+			textureIDs.push_back(textureID);  // 저장된 텍스처 ID 추가
+			stbi_image_free(data);
+		}
+		else {
+			std::cerr << "Failed to load texture: " << filename << std::endl;
+		}
+	}
+	return textureIDs;
+}
 
 Renderer::Renderer() {
 	
@@ -18,6 +51,10 @@ Renderer::~Renderer() {
 
 GLvoid Renderer::RenderScene()
 {
+	glEnable(GL_DEPTH_TEST);  // 깊이 테스트 활성화
+	glDepthFunc(GL_LESS);     // 깊이 비교 함수 설정
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 	glClearColor(0.0f, 1.0f, 1.0f, 1.0f); 
 	glClear(GL_COLOR_BUFFER_BIT); 
 	////////////////////////////////////////////
@@ -53,7 +90,7 @@ GLvoid Renderer::RenderScene()
 	
 	
 	glm::vec3 cameraPos = glm::vec3(0.0f, 1.3f, 3.0f); 
-	glm::vec3 lightPos(0.0f, 0.0f, 0.0f);
+	glm::vec3 lightPos(1.0f, 1.0f, 0.0f);
 	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 	bool lightOn = true;
 	glUniform3fv(glGetUniformLocation(shaderProgramID, "lightPos"), 1, glm::value_ptr(lightPos));
@@ -123,18 +160,17 @@ void Renderer::CreateShader()
 	shaderProgramID = sh.CreateShaderProgram(vertexShader, fragmentShader);
 }
 
-  
-
-
-
 GLvoid Renderer::RenderStage1() {
-	
-	glm::vec3 objectColor = glm::vec3(1.0f, 0.5f, 0.0f);
-	glUniform3fv(glGetUniformLocation(shaderProgramID, "objectColor"), 1, glm::value_ptr(objectColor));
+	std::vector<GLuint> textures = loadTextures(textureFiles);
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
 
 	Cube cube1;
 	cube1.position = glm::vec3(0.0f, 0.0f, 8.0f);
-	cube1.scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	cube1.scale = glm::vec3(1.0f, 0.2f, 1.0f);
 	cube1.rotationAngle = 0.0f;
 	cube1.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	cube1.updateModelMatrix();
@@ -145,7 +181,7 @@ GLvoid Renderer::RenderStage1() {
 
 	Cube cube2;
 	cube2.position = glm::vec3(cube1.position.x + 0.0f, cube1.position.y + 0.0f, cube1.position.z-1.5f);
-	cube2.scale = glm::vec3(0.5f, 1.0f, 2.0f);
+	cube2.scale = glm::vec3(0.5f, 0.2f, 2.0f);
 	cube2.rotationAngle = 0.0f;
 	cube2.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	cube2.updateModelMatrix();
@@ -156,7 +192,7 @@ GLvoid Renderer::RenderStage1() {
 
 	Cube cube3;
 	cube3.position = glm::vec3(cube2.position.x + 1.0f, cube2.position.y + 0.0f, cube2.position.z - 0.75f);
-	cube3.scale = glm::vec3(0.5f, 1.0f, 2.0f);
+	cube3.scale = glm::vec3(0.5f, 0.2f, 2.0f);
 	cube3.rotationAngle = 90.0f;
 	cube3.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	cube3.updateModelMatrix();
@@ -167,7 +203,7 @@ GLvoid Renderer::RenderStage1() {
 
 	Cube cube4;
 	cube4.position = glm::vec3(cube3.position.x + 0.75f, cube3.position.y + 0.0f, cube3.position.z - 1.25f);
-	cube4.scale = glm::vec3(0.5f, 1.0f, 2.0f);
+	cube4.scale = glm::vec3(0.5f, 0.2f, 2.0f);
 	cube4.rotationAngle = 0.0f;
 	cube4.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	cube4.updateModelMatrix();
@@ -178,7 +214,7 @@ GLvoid Renderer::RenderStage1() {
 
 	Cube cube5;
 	cube5.position = glm::vec3(cube4.position.x - 1.75f, cube4.position.y + 0.0f, cube4.position.z - 1.25f);
-	cube5.scale = glm::vec3(0.5f, 1.0f, 4.0f);
+	cube5.scale = glm::vec3(0.5f, 0.2f, 4.0f);
 	cube5.rotationAngle = 90.0f;
 	cube5.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	cube5.updateModelMatrix();
@@ -189,7 +225,7 @@ GLvoid Renderer::RenderStage1() {
 
 	Cube cube6;
 	cube6.position = glm::vec3(cube5.position.x - 1.75f, cube5.position.y + 0.0f, cube5.position.z - 1.25f);
-	cube6.scale = glm::vec3(0.5f, 1.0f, 1.0f);
+	cube6.scale = glm::vec3(0.5f, 0.2f, 1.0f);
 	cube6.rotationAngle = 0.0f;
 	cube6.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	cube6.updateModelMatrix();
@@ -200,7 +236,7 @@ GLvoid Renderer::RenderStage1() {
 
 	Cube cube7;
 	cube7.position = glm::vec3(cube6.position.x + 0.75f, cube6.position.y + 0.0f, cube6.position.z - 1.25f);
-	cube7.scale = glm::vec3(0.5f, 1.0f, 2.0f);
+	cube7.scale = glm::vec3(0.5f, 0.2f, 2.0f);
 	cube7.rotationAngle = 90.0f;
 	cube7.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	cube7.updateModelMatrix();
@@ -211,7 +247,7 @@ GLvoid Renderer::RenderStage1() {
 	
 	Cube cube8;
 	cube8.position = glm::vec3(cube7.position.x + 1.0f, cube7.position.y + 0.0f, cube7.position.z - 2.75f);
-	cube8.scale = glm::vec3(0.5f, 1.0f, 6.0f);
+	cube8.scale = glm::vec3(0.5f, 0.2f, 6.0f);
 	cube8.rotationAngle = 0.0f;
 	cube8.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	cube8.updateModelMatrix();
@@ -222,7 +258,7 @@ GLvoid Renderer::RenderStage1() {
 
 	Cube cube9;
 	cube9.position = glm::vec3(cube8.position.x + 1.75f, cube8.position.y + 0.0f, cube8.position.z);
-	cube9.scale = glm::vec3(0.5f, 1.0f, 4.0f);
+	cube9.scale = glm::vec3(0.5f, 0.2f, 4.0f);
 	cube9.rotationAngle = 0.0f;
 	cube9.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	cube9.updateModelMatrix();
@@ -233,7 +269,7 @@ GLvoid Renderer::RenderStage1() {
 
 	Cube cube10;
 	cube10.position = glm::vec3(cube8.position.x + -1.75f, cube8.position.y + 0.0f, cube8.position.z);
-	cube10.scale = glm::vec3(0.5f, 1.0f, 4.0f);
+	cube10.scale = glm::vec3(0.5f, 0.2f, 4.0f);
 	cube10.rotationAngle = 0.0f;
 	cube10.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	cube10.updateModelMatrix();
@@ -244,7 +280,7 @@ GLvoid Renderer::RenderStage1() {
 
 	Cube cube11;
 	cube11.position = glm::vec3(cube8.position.x, cube8.position.y + 0.0f, cube8.position.z + 1.75f);
-	cube11.scale = glm::vec3(0.5f, 1.0f, 4.0f);
+	cube11.scale = glm::vec3(0.5f, 0.2f, 4.0f);
 	cube11.rotationAngle = 90.0f;
 	cube11.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	cube11.updateModelMatrix();
@@ -255,7 +291,7 @@ GLvoid Renderer::RenderStage1() {
 
 	Cube cube12;
 	cube12.position = glm::vec3(cube8.position.x, cube8.position.y + 0.0f, cube8.position.z);
-	cube12.scale = glm::vec3(0.5f, 1.0f, 4.0f);
+	cube12.scale = glm::vec3(0.5f, 0.2f, 4.0f);
 	cube12.rotationAngle = 90.0f;
 	cube12.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	cube12.updateModelMatrix();
@@ -266,7 +302,7 @@ GLvoid Renderer::RenderStage1() {
 	
 	Cube cube13;
 	cube13.position = glm::vec3(cube8.position.x, cube8.position.y + 0.0f, cube8.position.z - 1.75f);
-	cube13.scale = glm::vec3(0.5f, 1.0f, 4.0f);
+	cube13.scale = glm::vec3(0.5f, 0.2f, 4.0f);
 	cube13.rotationAngle = 90.0f;
 	cube13.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	cube13.updateModelMatrix();
@@ -274,6 +310,9 @@ GLvoid Renderer::RenderStage1() {
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube13.modelMatrix));
 	cube13.draw();
 	cube13.DeleteBuffer();
+
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 0);
 }
 
 GLvoid Renderer::RenderStage2() {

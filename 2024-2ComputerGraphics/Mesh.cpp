@@ -10,8 +10,6 @@ Cube::Cube() {
     updateBounds();
 }
 
-
-
 void Cube::setupMesh() {
     float cubeVertices[] = {
         // positions          // normals           // texture coords
@@ -73,7 +71,6 @@ void Cube::setupMesh() {
     glEnableVertexAttribArray(2);
 }
 
-
 void Cube::updateModelMatrix() {
     modelMatrix = glm::mat4(1.0f);
     modelMatrix = glm::translate(modelMatrix, position);
@@ -92,6 +89,7 @@ void Cube::updateBounds() {
     minPoint = glm::vec3(worldMin.x, worldMin.y, worldMin.z);
     maxPoint = glm::vec3(worldMax.x, worldMax.y, worldMax.z);
 }
+
 Cube::~Cube() {
     
 }
@@ -102,7 +100,6 @@ void Cube::draw() {
     glBindVertexArray(0);
 
 }
-
 
 void Cube::DeleteBuffer()
 {

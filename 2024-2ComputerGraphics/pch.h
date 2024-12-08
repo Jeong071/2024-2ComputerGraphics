@@ -1,5 +1,7 @@
 #pragma once
 #define _CRT_SECURE_NO_WARNINGS
+#define STB_IMAGE_IMPLEMENTATION
+
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,7 +15,6 @@
 #include <glm/ext.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <sstream>
-
 
 #include "Initialize.h"
 #include "Shader.h"
