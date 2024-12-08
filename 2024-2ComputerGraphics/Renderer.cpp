@@ -61,7 +61,7 @@ GLvoid Renderer::RenderScene()
 	glUniform1i(glGetUniformLocation(shaderProgramID, "lightOn"), lightOn);
 
 	
-	RenderStage1();
+	
 	RenderStage2();
 	RenderStage3();
 
@@ -106,7 +106,7 @@ GLvoid Renderer::RenderScene()
 	
 	gModel.BindBuffer();
 	gModel.RenderPlayer();
-
+	RenderStage1();
 
 	d.DeleteBuffer();
 	gModel.ReleaseBuffer();
