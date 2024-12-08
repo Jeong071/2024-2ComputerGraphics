@@ -175,8 +175,8 @@ GLvoid InputManager::Timer(int value)
         mPlayerYPos += jumpVelocity;
 
         // ¹Ù´Ú¿¡ µµÂøÇßÀ» ¶§
-        if (mPlayerYPos <= 0.0f) {
-            mPlayerYPos = 0.0f;
+        if (mPlayerYPos <= 0.5f) {
+            mPlayerYPos = 0.5f;
             isJumping = false;
             jumpVelocity = 0.0f;
         }

@@ -68,7 +68,7 @@ GLvoid Renderer::RenderScene()
 
   
 	Cube d;
-	d.draw();	
+	//d.draw();	
 	
 	glm::mat4 playerMat = glm::mat4(1.0f);
 	
@@ -80,6 +80,8 @@ GLvoid Renderer::RenderScene()
 		gInput.GetPlayerZPos()
 	));
 	playerMat = rotate(playerMat, glm::radians(playerAngle), glm::vec3(0.0, rotateYAxis, 0.0));
+
+	playerMat = glm::scale(playerMat, glm::vec3(0.2f, 0.2f, 0.2f));
 
 	gCamera.SetCameraPos(
 		gInput.GetPlayerXPos(),

@@ -24,7 +24,7 @@ public:
 	static float GetPitch() { return mPitch; }
 private:
 	inline static float mPlayerXPos	{ 0.0f };
-	inline static float mPlayerYPos	{ 0.0f };
+	inline static float mPlayerYPos	{ 0.5f };
 	inline static float mPlayerZPos	{ 0.0f };
 
 	inline static glm::vec3 mPlayerLookVec{ 0.0f, 0.0f, -1.0f };
