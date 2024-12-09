@@ -42,8 +42,13 @@ extern float playerAngle;
 extern glm::mat4 rotationMatrix;
 extern glm::vec3 rotationAxis;
 extern float rotateYAxis;
+
+
+
+
 #define PLAYER_SPEED	0.025
 #define WIDTH			1280
 #define HEIGHT			960
 #define SENSITIVITY		0.15
 #define DISTANCE		0.5
+#define FLOOR			0.3

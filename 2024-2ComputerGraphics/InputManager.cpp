@@ -147,8 +147,8 @@ GLvoid InputManager::Timer(int value)
         gPlayer.MovePlayerYPos(jumpVelocity);
 
         // ¹Ù´Ú¿¡ µµÂøÇßÀ» ¶§
-        if (gPlayer.GetPlayerYPos() <= 0.6f) {
-            gPlayer.SetPlayerYPos(0.6f);
+        if (gPlayer.GetPlayerYPos() <= 0.15f) {
+            gPlayer.SetPlayerYPos(0.15f);
             gPlayer.SetIsJumping(false);
             jumpVelocity = 0.0f;
         }

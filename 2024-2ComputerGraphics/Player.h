@@ -28,7 +28,7 @@ public:
 	void SetIsJumping(bool isJump) { isJumping = isJump; }
 private:
 	float mPlayerXPos{ 0.0f };
-	float mPlayerYPos{ 0.6f };
+	float mPlayerYPos{ 0.15f };
 	float mPlayerZPos{ 8.0f };
 
 	bool isJumping{ false };

@@ -92,6 +92,9 @@
     <ClInclude Include="Player.h">
       <Filter>Core</Filter>
     </ClInclude>
+    <ClInclude Include="AABB.h">
+      <Filter>Core</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="VertexShader.glsl">
