@@ -23,6 +23,7 @@
 #include "Mesh.h"
 #include "Model.h"
 #include "InputManager.h"
+#include "Player.h"
 
 
 extern GLuint shaderProgramID;
@@ -34,14 +35,15 @@ extern GLuint fragmentShader;
 extern Model gModel;
 extern InputManager gInput;
 extern Camera gCamera;
+extern Player gPlayer;
 
 extern bool isVirtualMouse;
 extern float playerAngle;
 extern glm::mat4 rotationMatrix;
 extern glm::vec3 rotationAxis;
 extern float rotateYAxis;
-#define PLAYER_SPEED	0.1
+#define PLAYER_SPEED	0.025
 #define WIDTH			1280
 #define HEIGHT			960
 #define SENSITIVITY		0.15
-#define DISTANCE		6
+#define DISTANCE		0.5

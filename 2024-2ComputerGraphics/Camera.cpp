@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "Camera.h"
 //카메라 관련
-
+Player gPlayer;
 Camera::Camera()
-    : position(glm::vec3(gInput.GetPlayerXPos() , gInput.GetPlayerYPos(), gInput.GetPlayerZPos())), 
-    target(normalize(glm::vec3(2 * gInput.GetPlayerXPos() - position[0],gInput.GetPlayerYPos(),2 * gInput.GetPlayerZPos() - position[2]))), 
+    : position(glm::vec3(gPlayer.GetPlayerXPos() , gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos())),
+    target(normalize(glm::vec3(2 * gPlayer.GetPlayerXPos() - position[0], gPlayer.GetPlayerYPos(),2 * gPlayer.GetPlayerZPos() - position[2]))),
     upDirection(glm::vec3(0.0f, 1.0f, 0.0f)) {
 
 }
@@ -32,8 +32,8 @@ glm::vec3 Camera::GetCameraPos() const
 
 void Camera::SetCameraPos(float x, float y, float z)
 {
-    float radYaw = glm::radians(gInput.GetYaw());
-    float radPitch = glm::radians(gInput.GetPitch());
+    float radYaw = glm::radians(gPlayer.GetYaw());
+    float radPitch = glm::radians(gPlayer.GetPitch());
 
     float cx = DISTANCE * cos(radPitch) * cos(radYaw);
     float cy = DISTANCE * sin(radPitch);

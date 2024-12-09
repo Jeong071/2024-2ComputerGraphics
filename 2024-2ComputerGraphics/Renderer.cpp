@@ -56,7 +56,8 @@ GLvoid Renderer::RenderScene()
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glClearColor(0.0f, 1.0f, 1.0f, 1.0f); 
-	glClear(GL_COLOR_BUFFER_BIT); 
+	glEnable(GL_DEPTH_TEST); // 깊이 테스트 활성화
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // 깊이 버퍼 지우기 
 	////////////////////////////////////////////
 	//										  //
 	//				Draw Code			      //
@@ -105,23 +106,23 @@ GLvoid Renderer::RenderScene()
 	
 	
 	playerMat = glm::translate(playerMat, glm::vec3(
-		gInput.GetPlayerXPos(),
-		gInput.GetPlayerYPos(),
-		gInput.GetPlayerZPos()
+		gPlayer.GetPlayerXPos(),
+		gPlayer.GetPlayerYPos(),
+		gPlayer.GetPlayerZPos()
 	));
 	playerMat = rotate(playerMat, glm::radians(playerAngle), glm::vec3(0.0, rotateYAxis, 0.0));
 
-	playerMat = glm::scale(playerMat, glm::vec3(0.2f, 0.2f, 0.2f));
+	playerMat = glm::scale(playerMat, glm::vec3(0.06f, 0.06f, 0.06f));
 
 	gCamera.SetCameraPos(
-		gInput.GetPlayerXPos(),
-		gInput.GetPlayerYPos(),
-		gInput.GetPlayerZPos()
+		gPlayer.GetPlayerXPos(),
+		gPlayer.GetPlayerYPos(),
+		gPlayer.GetPlayerZPos()
 	);
 	gCamera.SetCameraTarget(
-		gInput.GetPlayerXPos(),
-		gInput.GetPlayerYPos(),
-		gInput.GetPlayerZPos()
+		gPlayer.GetPlayerXPos(),
+		gPlayer.GetPlayerYPos(),
+		gPlayer.GetPlayerZPos()
 	);
 
 
