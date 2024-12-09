@@ -22,6 +22,7 @@ int main(int argc, char** argv) {
     
 	glutWarpPointer(WIDTH / 2, HEIGHT / 2);
 
+	Renderer::InitializeTextures();
 	Renderer draw;
 	draw.CreateShader();
 	glutDisplayFunc(draw.RenderScene);

@@ -6,6 +6,8 @@ public:
 	Renderer();
 	~Renderer();
 
+	static void InitializeTextures();
+
 	static GLvoid RenderScene();
 	static void CreateShader();
 
@@ -15,6 +17,7 @@ public:
 	static void RenderStage3();
 
 private:
+	static std::vector<GLuint> textureIDs;
 	std::vector<Cube> cubes;
 	static GLuint shaderProgramID;
 };

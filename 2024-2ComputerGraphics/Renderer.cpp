@@ -7,14 +7,11 @@
 #include "stb_image.h"
 using namespace std;
 
+std::vector<GLuint> Renderer::textureIDs;
 GLuint Renderer::shaderProgramID = 0;
 Camera gCamera;
 float playerAngle {0.0f};
 
-//텍스처 파일들 - 필요시 계속 추가
-std::vector<std::string>textureFiles = { "floor_texture.jpg", "enemy_body.png","enemy_head_face.png",
-										 "enemy_head.png", "enemy_nose.png", "enemy_arm.png", "enemy_underBody.png",
-										 "enemy_leg.png" };
 std::vector<GLuint> loadTextures(const std::vector<std::string>& filenames) {
 	std::vector<GLuint> textureIDs;
 	glActiveTexture(GL_TEXTURE0);
@@ -157,6 +154,16 @@ GLvoid Renderer::RenderScene()
 	glutSwapBuffers();
 }
 
+void Renderer::InitializeTextures() {
+	std::vector<std::string> textureFiles = {
+		"floor_texture.jpg", "enemy_body.png", "enemy_head_face.png",
+		"enemy_head.png", "enemy_nose.png", "enemy_arm.png", "enemy_underBody.png",
+		"enemy_leg.png"
+	};
+
+	textureIDs = loadTextures(textureFiles);
+}
+
 void Renderer::CreateShader()
 {
 	Shader sh;
@@ -166,8 +173,6 @@ void Renderer::CreateShader()
 }
 
 GLvoid Renderer::RenderEnemy() { 
-	std::vector<GLuint> textures = loadTextures(textureFiles);
-
 	Cube enemyBody;
 	enemyBody.position = glm::vec3(0.0f, 0.7f, 4.0f);
 	enemyBody.scale = glm::vec3(0.4f, 0.2f, 0.2f);
@@ -176,7 +181,7 @@ GLvoid Renderer::RenderEnemy() {
 	enemyBody.updateModelMatrix();
 	enemyBody.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(enemyBody.modelMatrix));
-	glBindTexture(GL_TEXTURE_2D, textures[1]);
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[1]);
 	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
 	enemyBody.draw(36, 0);
@@ -190,9 +195,9 @@ GLvoid Renderer::RenderEnemy() {
 	enemyHead.updateModelMatrix();
 	enemyHead.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(enemyHead.modelMatrix));
-	glBindTexture(GL_TEXTURE_2D, textures[2]);
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[2]);
 	enemyBody.draw(6, 0);
-	glBindTexture(GL_TEXTURE_2D, textures[3]);
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[3]);
 	for (int i = 1; i < 6; ++i) {
 		enemyBody.draw(6, (void*)(i * 6 * sizeof(GLuint)));
 	}
@@ -206,7 +211,7 @@ GLvoid Renderer::RenderEnemy() {
 	enemyNose.updateModelMatrix();
 	enemyNose.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(enemyNose.modelMatrix));
-	glBindTexture(GL_TEXTURE_2D, textures[4]);
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[4]);
 	enemyNose.draw(36, 0);
 	enemyNose.DeleteBuffer();
 
@@ -218,7 +223,7 @@ GLvoid Renderer::RenderEnemy() {
 	enemyLeftArm.updateModelMatrix();
 	enemyLeftArm.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(enemyLeftArm.modelMatrix));
-	glBindTexture(GL_TEXTURE_2D, textures[5]);
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[5]);
 	enemyLeftArm.draw(36, 0);
 	enemyLeftArm.DeleteBuffer();
 
@@ -230,7 +235,7 @@ GLvoid Renderer::RenderEnemy() {
 	enemyRightArm.updateModelMatrix();
 	enemyRightArm.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(enemyRightArm.modelMatrix));
-	glBindTexture(GL_TEXTURE_2D, textures[5]);
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[5]);
 	enemyLeftArm.draw(36, 0);
 	enemyRightArm.DeleteBuffer();
 
@@ -242,7 +247,7 @@ GLvoid Renderer::RenderEnemy() {
 	enemyUnderBody.updateModelMatrix();
 	enemyUnderBody.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(enemyUnderBody.modelMatrix));
-	glBindTexture(GL_TEXTURE_2D, textures[6]);
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[6]);
 	enemyLeftArm.draw(36, 0);
 	enemyUnderBody.DeleteBuffer();
 
@@ -254,7 +259,7 @@ GLvoid Renderer::RenderEnemy() {
 	enemyLeftLeg.updateModelMatrix();
 	enemyLeftLeg.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(enemyLeftLeg.modelMatrix));
-	glBindTexture(GL_TEXTURE_2D, textures[7]);
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[7]);
 	enemyLeftArm.draw(36, 0);
 	enemyLeftLeg.DeleteBuffer();
 
@@ -266,7 +271,7 @@ GLvoid Renderer::RenderEnemy() {
 	enemyRightLeg.updateModelMatrix();
 	enemyRightLeg.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(enemyRightLeg.modelMatrix));
-	glBindTexture(GL_TEXTURE_2D, textures[7]);
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[7]);
 	enemyLeftArm.draw(36, 0);
 	enemyRightLeg.DeleteBuffer();
 
@@ -275,9 +280,7 @@ GLvoid Renderer::RenderEnemy() {
 }
 
 GLvoid Renderer::RenderStage1() {
-	std::vector<GLuint> textures = loadTextures(textureFiles);
-
-	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[0]);
 	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
 
@@ -428,9 +431,7 @@ GLvoid Renderer::RenderStage1() {
 }
 
 GLvoid Renderer::RenderStage2() {
-	std::vector<GLuint> textures = loadTextures(textureFiles);
-
-	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[0]);
 	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
 
@@ -449,9 +450,7 @@ GLvoid Renderer::RenderStage2() {
 }
 
 GLvoid Renderer::RenderStage3() {
-	std::vector<GLuint> textures = loadTextures(textureFiles);
-
-	glBindTexture(GL_TEXTURE_2D, textures[0]);
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[0]);
 	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
 
