@@ -140,6 +140,7 @@ GLvoid Renderer::RenderScene()
 	gModel.BindBuffer();
 	gModel.RenderPlayer();
 	RenderStage1();
+	//2스테이지 끝 점 (-4, -0.1, -13) , (4, 0.1, -5)
 	RenderStage2();
 	RenderStage3();
 
@@ -344,7 +345,7 @@ GLvoid Renderer::RenderStage3() {
 
 	Cube cube15;
 	cube15.position = glm::vec3(0.0f, 0.0f, -19.5f);
-	cube15.scale = glm::vec3(0.5f, 0.2f, 12.0f);
+	cube15.scale = glm::vec3(0.5f, 0.2f, 13.0f);
 	cube15.rotationAngle = 0.0f;
 	cube15.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	cube15.updateModelMatrix();
