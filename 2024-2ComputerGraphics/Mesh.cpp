@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Mesh.h"
-
+#include "iostream"
 //버퍼 바인드 및 정점 저장
 
 Cube::Cube() {
@@ -79,24 +79,33 @@ void Cube::updateModelMatrix() {
 }
 
 void Cube::updateBounds() {
-    glm::vec3 localMin = glm::vec3(-0.5f, -0.5f, -0.5f) * scale;
-    glm::vec3 localMax = glm::vec3(0.5f, 0.5f, 0.5f) * scale;
+    glm::vec3 vertices[8] = {
+        glm::vec3(-0.5f, -0.5f, -0.5f), glm::vec3(0.5f, -0.5f, -0.5f),
+        glm::vec3(0.5f, 0.5f, -0.5f), glm::vec3(-0.5f, 0.5f, -0.5f),
+        glm::vec3(-0.5f, -0.5f, 0.5f), glm::vec3(0.5f, -0.5f, 0.5f),
+        glm::vec3(0.5f, 0.5f, 0.5f), glm::vec3(-0.5f, 0.5f, 0.5f)
+    };
 
-    // Transforming the local bounds by the model matrix to get the world-space bounds
-    glm::vec4 worldMin = modelMatrix * glm::vec4(localMin, 1.0f);
-    glm::vec4 worldMax = modelMatrix * glm::vec4(localMax, 1.0f);
+    glm::vec3 transformed_min = glm::vec3(FLT_MAX);
+    glm::vec3 transformed_max = glm::vec3(-FLT_MAX);
 
-    minPoint = glm::vec3(worldMin.x, worldMin.y, worldMin.z);
-    maxPoint = glm::vec3(worldMax.x, worldMax.y, worldMax.z);
+    for (int i = 0; i < 8; i++) {
+        glm::vec4 transformed = modelMatrix * glm::vec4(vertices[i], 1.0f);
+        transformed_min = glm::min(transformed_min, glm::vec3(transformed));
+        transformed_max = glm::max(transformed_max, glm::vec3(transformed));
+    }
+
+    minPoint = transformed_min;
+    maxPoint = transformed_max;
 }
 
 Cube::~Cube() {
     
 }
 
-void Cube::draw() {
+void Cube::draw(GLsizei count, const void *indices) {
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, indices);
     glBindVertexArray(0);
 
 }
