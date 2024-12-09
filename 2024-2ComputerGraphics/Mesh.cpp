@@ -103,9 +103,9 @@ Cube::~Cube() {
     
 }
 
-void Cube::draw() {
+void Cube::draw(GLsizei count, const void *indices) {
     glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_INT, indices);
     glBindVertexArray(0);
 
 }
