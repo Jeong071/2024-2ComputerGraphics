@@ -12,7 +12,7 @@ public:
     ~Cube();
 
 
-        void draw();
+        void draw(GLsizei count, const void* indices);
         void updateModelMatrix(); // 모델 행렬 업데이트
         void updateBounds();
         void DeleteBuffer();
