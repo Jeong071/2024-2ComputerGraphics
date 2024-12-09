@@ -115,28 +115,54 @@ GLvoid InputManager::Timer(int value)
 {
     float firstAngle = playerAngle;
     float yaw = gPlayer.GetYaw();
-    glm::vec3 cameraVec = glm::normalize(gCamera.GetTarget() - gCamera.GetCameraPos());
+    glm::vec3 cameraVec = glm::vec3(gCamera.GetTarget().x - gCamera.GetCameraPos().x, 0.0f, gCamera.GetTarget().z - gCamera.GetCameraPos().z);
+    cameraVec = glm::normalize(cameraVec);
     glm::vec3 playerVec = glm::vec3(gPlayer.GetPlayerLookVec().x, 0.0f, gPlayer.GetPlayerLookVec().z);
     playerVec = glm::normalize(playerVec);
-    if (mKeys['w']) {
+    
+    if (mKeys['w'] && mKeys['a']) {
+        gPlayer.Rotate(cameraVec, playerVec, -45.0f);
+        gPlayer.MovePlayerXPos(-PLAYER_SPEED * sin(glm::radians(yaw)));
+        gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw)));
+    }
+    else if (mKeys['w'] && mKeys['d']) {
+        gPlayer.Rotate(cameraVec, playerVec, 45.0f);
+        gPlayer.MovePlayerXPos(-PLAYER_SPEED * -sin(glm::radians(yaw)));
+        gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw)));
+    }
+    else if (mKeys['s'] && mKeys['a']) {
+        gPlayer.Rotate(cameraVec, playerVec, -135.0f);
+        gPlayer.MovePlayerXPos(-PLAYER_SPEED * sin(glm::radians(yaw)));
+        gPlayer.MovePlayerZPos(-PLAYER_SPEED * -sin(glm::radians(yaw)));
+    }
+    else if (mKeys['s'] && mKeys['d']) {
+        gPlayer.Rotate(cameraVec, playerVec, 135.0f);
+        gPlayer.MovePlayerXPos(-PLAYER_SPEED * -sin(glm::radians(yaw)));
+        gPlayer.MovePlayerZPos(-PLAYER_SPEED * -sin(glm::radians(yaw)));
+    }
+
+    else if (mKeys['w']) {
         gPlayer.Rotate(cameraVec, playerVec, 0.0f);
         gPlayer.MovePlayerXPos(PLAYER_SPEED * -cos(glm::radians(yaw)));
         gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw)));
-        
-
     }
-    if (mKeys['s']) {
+    else if (mKeys['s']) {
+        gPlayer.Rotate(cameraVec, playerVec, 180.0f);
         gPlayer.MovePlayerZPos(-PLAYER_SPEED * -sin(glm::radians(yaw)));
         gPlayer.MovePlayerXPos(PLAYER_SPEED * cos(glm::radians(yaw)));
     }
-    if (mKeys['a']) {
+    else if (mKeys['a']) {
+        gPlayer.Rotate(cameraVec, playerVec, -90.0f);
         gPlayer.MovePlayerZPos(PLAYER_SPEED * cos(glm::radians(yaw)));
         gPlayer.MovePlayerXPos(-PLAYER_SPEED * sin(glm::radians(yaw)));
     }
-    if (mKeys['d']) {
+    else if (mKeys['d']) {
+        gPlayer.Rotate(cameraVec, playerVec, 90.0f);
         gPlayer.MovePlayerZPos(PLAYER_SPEED * -cos(glm::radians(yaw)));
         gPlayer.MovePlayerXPos(-PLAYER_SPEED * -sin(glm::radians(yaw)));
     }
+    
+
     if (mKeys['z']) {
         std::cout << "플레이어 : " << playerVec.x << playerVec.y << playerVec.z << std::endl;
         std::cout << "카메라 : " << cameraVec.x << cameraVec.y << cameraVec.z << std::endl;
