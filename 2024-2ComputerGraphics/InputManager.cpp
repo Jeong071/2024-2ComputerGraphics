@@ -8,10 +8,11 @@ float firstAngle = playerAngle;
 glm::vec3 rotationAxis;
 float rotateYAxis{1.0f};
 float jumpVelocity = 0.0f;
-const float gravity = -0.98f; // 중력 가속도 (조절 가능)
+const float gravity = -0.98f; // 중력 가속도 
 float positionY = 0.0f;
+
 glm::vec3 stage1 = glm::vec3(0.0f, 0.1f, 8.0f);
-glm::vec3 stage2 = glm::vec3(0.0f, 0.1f, -4.0f);
+glm::vec3 stage2 = glm::vec3(0.0f, 0.1f, -14.0f);
 glm::vec3 stage3 = glm::vec3(0.0f, 0.1f, 8.0f);
 
 void InputManager::Run()
@@ -53,9 +54,9 @@ GLvoid InputManager::Key(unsigned char key, int x, int y)
         
         isVirtualMouse = !isVirtualMouse;
     }
-    if (key == ' ' && !gPlayer.GetIsJumping() && !gPlayer.GetIsFalling()) { // 스페이스바
+    if (key == ' ' && !gPlayer.GetIsJumping() && !gPlayer.GetIsFalling()) {
         gPlayer.SetIsJumping(true);
-        jumpVelocity = 0.2f; // 초기 점프 속도 (조절 가능)
+        jumpVelocity = 0.2f; // 점프 속도
         
     }
     if (key == 'z') {
@@ -103,8 +104,8 @@ GLvoid InputManager::MouseMotion(int x, int y)
 
     if (gPlayer.GetPitch() > 89.0f)
         gPlayer.SetPitch(89.0f);
-    if (gPlayer.GetPitch() < 0.0f)
-        gPlayer.SetPitch(0.0f);
+    if (gPlayer.GetPitch() < 15.0f)
+        gPlayer.SetPitch(15.0f);
 
     if (isVirtualMouse) {
         glutWarpPointer(WIDTH / 2, HEIGHT / 2);
@@ -174,20 +175,21 @@ GLvoid InputManager::Timer(int value)
     
 
     if (mKeys['z']) {
-        std::cout << "플레이어 : " << playerVec.x << playerVec.y << playerVec.z << std::endl;
-        std::cout << "카메라 : " << cameraVec.x << cameraVec.y << cameraVec.z << std::endl;
-        std::cout << "=========================" << std::endl;
+        std::cout << "플레이어 min : " << gPlayer.GetMinPoint().x<<", " << gPlayer.GetMinPoint().y << ", " << gPlayer.GetMinPoint().z << std::endl;
+        std::cout << "플레이어 max : " << gPlayer.GetMaxPoint().x << ", " << gPlayer.GetMaxPoint().y << ", " << gPlayer.GetMaxPoint().z << std::endl;
+        
     }
     if (gPlayer.GetIsJumping()) {
-        jumpVelocity += gravity * 1/60;
+        jumpVelocity += gravity * 1.0f/75.0f;
         gPlayer.MovePlayerYPos(jumpVelocity);
         gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
 
         // 바닥에 도착했을 때
-        if (gPlayer.GetPlayerYPos() <= 0.1f) {
+        if (gPlayer.GetPlayerYPos() <= 0.f) {
             gPlayer.SetPlayerYPos(0.1f);
             gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
             gPlayer.SetIsJumping(false);
+            gPlayer.SetIsFalling(false);
             jumpVelocity = 0.0f;
         }
     }
@@ -195,7 +197,9 @@ GLvoid InputManager::Timer(int value)
     if (gPlayer.GetIsFalling()) {
         
         float FallVelocity{ 0.0f };
-        FallVelocity += gravity * 1 / 60;
+        
+        FallVelocity += (gravity * 1.0f / 30.0f);
+        
         gPlayer.MovePlayerYPos(FallVelocity);
         gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
         if (gPlayer.GetPlayerYPos() <= -1.5f) {
@@ -204,6 +208,7 @@ GLvoid InputManager::Timer(int value)
                 gPlayer.SetPlayerYPos(stage1.y);
                 gPlayer.SetPlayerZPos(stage1.z);
                 
+                
             }
             else if (gPlayer.GetStage() == 2) {
                 gPlayer.SetPlayerXPos(stage2.x);
@@ -211,15 +216,15 @@ GLvoid InputManager::Timer(int value)
                 gPlayer.SetPlayerZPos(stage2.z);
               
             }
-            gPlayer.ResetPlayerLookVec();
-            gCamera.ResetCamera();
+            gPlayer.SetYaw(90.0f);
+            playerAngle = 0.0f;
         }
     }
 
     if (gPlayer.GetPlayerZPos() < 15.0f && gPlayer.GetPlayerZPos() >= -4.0f) {
         gPlayer.SetStage(1);
     }
-    else if (gPlayer.GetPlayerZPos() < -4.0f && gPlayer.GetPlayerZPos() >= -10.0f) {
+    else if (gPlayer.GetPlayerZPos() < -4.0f && gPlayer.GetPlayerZPos() >= -12.0f) {
         gPlayer.SetStage(2);
     }
 

@@ -34,7 +34,7 @@ void Player::Rotate(glm::vec3& first, glm::vec3& last, float turnAngle)
     else {
         playerAngle += 5.0f;
     }
-    //last = first;
+    
 
 }
 

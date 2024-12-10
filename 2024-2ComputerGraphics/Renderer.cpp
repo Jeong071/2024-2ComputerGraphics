@@ -12,7 +12,7 @@ GLuint Renderer::shaderProgramID = 0;
 Camera gCamera;
 float playerAngle {0.0f};
 std::vector<Cube> Renderer::cubes;
-//std::vector<Cube> cubes;
+
 
 std::vector<GLuint> loadTextures(const std::vector<std::string>& filenames) {
 	std::vector<GLuint> textureIDs;
@@ -60,7 +60,7 @@ GLvoid Renderer::RenderScene()
 
 	glClearColor(0.0f, 1.0f, 1.0f, 1.0f); 
 	glEnable(GL_DEPTH_TEST); // 깊이 테스트 활성화
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // 깊이 버퍼 지우기 
+	
 	////////////////////////////////////////////
 	//										  //
 	//				Draw Code			      //
@@ -96,7 +96,7 @@ GLvoid Renderer::RenderScene()
 	
 	
 	glm::vec3 cameraPos = glm::vec3(0.0f, 1.3f, 3.0f); 
-	glm::vec3 lightPos(1.0f, 1.0f, 0.0f);
+	glm::vec3 lightPos(0.0f, 100.0f, 0.0f);
 	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
 	bool lightOn = true;
 	glUniform3fv(glGetUniformLocation(shaderProgramID, "lightPos"), 1, glm::value_ptr(lightPos));
@@ -121,7 +121,7 @@ GLvoid Renderer::RenderScene()
 	playerMat = rotate(playerMat, glm::radians(playerAngle), glm::vec3(0.0, rotateYAxis, 0.0));
 
 	playerMat = glm::scale(playerMat, glm::vec3(0.06f, 0.06f, 0.06f));
-
+	playerMat = glm::translate(playerMat, glm::vec3(0.0f, 1.3f, 0.0f));
 	gCamera.SetCameraPos(
 		gPlayer.GetPlayerXPos(),
 		gPlayer.GetPlayerYPos(),
@@ -133,7 +133,7 @@ GLvoid Renderer::RenderScene()
 		gPlayer.GetPlayerZPos()
 	);
 
-	gPlayer.PrintPlayerPos();
+	
 	GLint modelLoc = glGetUniformLocation(shaderProgramID, "model");
 	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(playerMat));
 
@@ -141,13 +141,15 @@ GLvoid Renderer::RenderScene()
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
 	GLint uniformColorLocation = glGetUniformLocation(shaderProgramID, "objectColor");
-	glm::vec3 customColor(0.0f, 1.0f, 1.0f);
+	glm::vec3 customColor(1.0f, 1.0f, 1.0f);
 	glUniform3fv(uniformColorLocation, 1, glm::value_ptr(customColor));
+
+	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 0);
 
 	
 	gModel.BindBuffer();
 	gModel.RenderPlayer();
-
+	
 	//적 생성
 	RenderEnemy();
 
@@ -855,7 +857,7 @@ void Renderer::ProcessCollision()
     for (Cube& b : cubes) {
         if (CheckCollision(b)) {
             collided = true;
-            // 여기서는 break를 쓰지 않고 모든 큐브를 검사
+            
         }
     }
 

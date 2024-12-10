@@ -18,7 +18,7 @@ void main() {
     vec3 effectiveColor = useTexture ? texColor.rgb : objectColor;  // 텍스처 사용 여부에 따라 색상 결정
 
     // Ambient Lighting
-    vec3 ambientLight = 0.3 * lightColor * effectiveColor;
+    vec3 ambientLight = 0.5 * lightColor * effectiveColor;
 
     // Diffuse Lighting
     vec3 lightDir = normalize(lightPos - FragPos);
@@ -29,7 +29,7 @@ void main() {
     // Specular Lighting
     vec3 viewDir = normalize(viewPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0),32);
     vec3 specular = spec * lightColor;
 
     // 조명 결과 계산

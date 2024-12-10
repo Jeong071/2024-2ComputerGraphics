@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Model.h"
-//.obj 파싱 후  unordered_map으로 모델 저장
+//.obj 파싱 후  모델 저장
 
 Model::Model()
 {
@@ -46,28 +46,23 @@ void Model::ParseObj(const std::string& objFile)
             std::vector<Face> faceVertices;
             std::string vertexStr;
 
-            // 삼각형이므로 정확히 3개의 정점 정보가 있어야 함
+            
             for (int i = 0; i < 3; ++i) {
-                if (!(iss >> vertexStr)) {
-                    // 에러 처리: 삼각형에 필요한 정점 정보가 부족함
-                    throw std::runtime_error("Invalid face definition. Expected 3 vertices.");
-                }
-
-                // '/'를 공백으로 대체하여 v, vt, vn 인덱스 분리
+                
+                iss >> vertexStr;
                 std::replace(vertexStr.begin(), vertexStr.end(), '/', ' ');
                 std::istringstream viss(vertexStr);
                 Face face = { 0, 0, 0 };
 
-                // v, vt, vn 인덱스 파싱
+               
                 viss >> face.vertexIndex;
                 if (!(viss >> face.textureIndex)) {
-                    face.textureIndex = -1; // 텍스처 인덱스가 없을 경우 -1로 설정
+                    face.textureIndex = -1; 
                 }
                 if (!(viss >> face.normalIndex)) {
-                    face.normalIndex = -1; // 노멀 인덱스가 없을 경우 -1로 설정
+                    face.normalIndex = -1;
                 }
 
-                // OBJ 인덱스는 1부터 시작하므로 0 기반으로 변환
                 face.vertexIndex = (face.vertexIndex > 0) ? (face.vertexIndex - 1) : (mPlayerVertices.size() + face.vertexIndex);
                 face.textureIndex = (face.textureIndex > 0) ? (face.textureIndex - 1) : ((face.textureIndex != -1) ? (mPlayerVertexTextures.size() + face.textureIndex) : -1);
                 face.normalIndex = (face.normalIndex > 0) ? (face.normalIndex - 1) : ((face.normalIndex != -1) ? (mPlayerVertexNormals.size() + face.normalIndex) : -1);
@@ -75,7 +70,6 @@ void Model::ParseObj(const std::string& objFile)
                 faceVertices.push_back(face);
             }
 
-            // 삼각형이므로 팬 트라이앵귤레이션 불필요, 바로 얼굴 리스트에 추가
             if (faceVertices.size() != 3) {
                 throw std::runtime_error("Non-triangle face detected after triangulation.");
             }
@@ -84,15 +78,12 @@ void Model::ParseObj(const std::string& objFile)
             mPlayerFaces.push_back(faceVertices[1]);
             mPlayerFaces.push_back(faceVertices[2]);
         }
-        // 필요에 따라 다른 접두사 처리
     }
 
     // 인덱스 배열 생성
     for (const auto& f : mPlayerFaces) {
         mPlayerIndex.push_back(f.vertexIndex);
-        // 텍스처와 노멀 인덱스를 필요에 따라 추가로 처리
-        // 예: mPlayerTexIndex.push_back(f.textureIndex);
-        //     mPlayerNormalIndex.push_back(f.normalIndex);
+        
     }
 
 }
