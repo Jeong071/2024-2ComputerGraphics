@@ -16,7 +16,9 @@ public:
         void updateModelMatrix(); // 모델 행렬 업데이트
         void updateBounds();
         void DeleteBuffer();
-
+        void PrintCubeAABB();
+        glm::vec3 GetCubeMinAABB() { return minPoint; }
+        glm::vec3 GetCubeMaxAABB() { return maxPoint; }
 private:
     void setupMesh();
 };

@@ -50,3 +50,9 @@ void Camera::SetCameraTarget(float x, float y, float z)
                         2 * y - position[1],
                         2 * z - position[2]);
 }
+
+void Camera::ResetCamera()
+{
+    position = glm::vec3(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
+    target = normalize(glm::vec3(2 * gPlayer.GetPlayerXPos() - position[0], gPlayer.GetPlayerYPos(), 2 * gPlayer.GetPlayerZPos() - position[2]));
+}

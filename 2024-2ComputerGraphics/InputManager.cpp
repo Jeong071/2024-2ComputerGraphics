@@ -10,7 +10,9 @@ float rotateYAxis{1.0f};
 float jumpVelocity = 0.0f;
 const float gravity = -0.98f; // 중력 가속도 (조절 가능)
 float positionY = 0.0f;
-
+glm::vec3 stage1 = glm::vec3(0.0f, 0.1f, 8.0f);
+glm::vec3 stage2 = glm::vec3(0.0f, 0.1f, -4.0f);
+glm::vec3 stage3 = glm::vec3(0.0f, 0.1f, 8.0f);
 
 void InputManager::Run()
 {
@@ -51,7 +53,7 @@ GLvoid InputManager::Key(unsigned char key, int x, int y)
         
         isVirtualMouse = !isVirtualMouse;
     }
-    if (key == ' ' && !gPlayer.GetIsJumping()) { // 스페이스바
+    if (key == ' ' && !gPlayer.GetIsJumping() && !gPlayer.GetIsFalling()) { // 스페이스바
         gPlayer.SetIsJumping(true);
         jumpVelocity = 0.2f; // 초기 점프 속도 (조절 가능)
         
@@ -120,46 +122,54 @@ GLvoid InputManager::Timer(int value)
     glm::vec3 playerVec = glm::vec3(gPlayer.GetPlayerLookVec().x, 0.0f, gPlayer.GetPlayerLookVec().z);
     playerVec = glm::normalize(playerVec);
     
-    if (mKeys['w'] && mKeys['a']) {
+    if (mKeys['w'] && mKeys['a'] && !gPlayer.GetIsFalling()) {
         gPlayer.Rotate(cameraVec, playerVec, -45.0f);
         gPlayer.MovePlayerXPos(- PLAYER_SPEED * cos(glm::radians(yaw - 45.0f)));
         gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw - 45.0f)));
+        gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
     }
-    else if (mKeys['w'] && mKeys['d']) {
+    else if (mKeys['w'] && mKeys['d'] && !gPlayer.GetIsFalling()) {
         gPlayer.Rotate(cameraVec, playerVec, 45.0f);
         gPlayer.MovePlayerXPos(-PLAYER_SPEED * cos(glm::radians(yaw + 45.0f)));
         gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw + 45.0f)));
+        gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
     }
-    else if (mKeys['s'] && mKeys['a']) {
+    else if (mKeys['s'] && mKeys['a'] && !gPlayer.GetIsFalling()) {
         gPlayer.Rotate(cameraVec, playerVec, -135.0f);
         gPlayer.MovePlayerXPos(-PLAYER_SPEED * cos(glm::radians(yaw - 135.0f)));
         gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw - 135.0f)));
+        gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
     }
-    else if (mKeys['s'] && mKeys['d']) {
+    else if (mKeys['s'] && mKeys['d'] && !gPlayer.GetIsFalling()) {
         gPlayer.Rotate(cameraVec, playerVec, 135.0f);
         gPlayer.MovePlayerXPos(-PLAYER_SPEED * cos(glm::radians(yaw + 135.0f)));
         gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw + 135.0f)));
+        gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
     }
 
-    else if (mKeys['w']) {
+    else if (mKeys['w'] && !gPlayer.GetIsFalling()) {
         gPlayer.Rotate(cameraVec, playerVec, 0.0f);
-        gPlayer.MovePlayerXPos(PLAYER_SPEED * -cos(glm::radians(yaw)));
         gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw)));
+        gPlayer.MovePlayerXPos(PLAYER_SPEED * -cos(glm::radians(yaw)));
+        gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
     }
-    else if (mKeys['s']) {
+    else if (mKeys['s'] && !gPlayer.GetIsFalling()) {
         gPlayer.Rotate(cameraVec, playerVec, 180.0f);
-        gPlayer.MovePlayerZPos(-PLAYER_SPEED * -sin(glm::radians(yaw)));
         gPlayer.MovePlayerXPos(PLAYER_SPEED * cos(glm::radians(yaw)));
+        gPlayer.MovePlayerZPos(-PLAYER_SPEED * -sin(glm::radians(yaw)));
+        gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
     }
-    else if (mKeys['a']) {
+    else if (mKeys['a'] && !gPlayer.GetIsFalling()) {
         gPlayer.Rotate(cameraVec, playerVec, -90.0f);
-        gPlayer.MovePlayerZPos(PLAYER_SPEED * cos(glm::radians(yaw)));
         gPlayer.MovePlayerXPos(-PLAYER_SPEED * sin(glm::radians(yaw)));
+        gPlayer.MovePlayerZPos(PLAYER_SPEED * cos(glm::radians(yaw)));
+        gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
     }
-    else if (mKeys['d']) {
+    else if (mKeys['d'] && !gPlayer.GetIsFalling()) {
         gPlayer.Rotate(cameraVec, playerVec, 90.0f);
-        gPlayer.MovePlayerZPos(PLAYER_SPEED * -cos(glm::radians(yaw)));
         gPlayer.MovePlayerXPos(-PLAYER_SPEED * -sin(glm::radians(yaw)));
+        gPlayer.MovePlayerZPos(PLAYER_SPEED * -cos(glm::radians(yaw)));
+        gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
     }
     
 
@@ -171,14 +181,48 @@ GLvoid InputManager::Timer(int value)
     if (gPlayer.GetIsJumping()) {
         jumpVelocity += gravity * 1/60;
         gPlayer.MovePlayerYPos(jumpVelocity);
+        gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
 
         // 바닥에 도착했을 때
-        if (gPlayer.GetPlayerYPos() <= 0.15f) {
-            gPlayer.SetPlayerYPos(0.15f);
+        if (gPlayer.GetPlayerYPos() <= 0.1f) {
+            gPlayer.SetPlayerYPos(0.1f);
+            gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
             gPlayer.SetIsJumping(false);
             jumpVelocity = 0.0f;
         }
     }
+
+    if (gPlayer.GetIsFalling()) {
+        
+        float FallVelocity{ 0.0f };
+        FallVelocity += gravity * 1 / 60;
+        gPlayer.MovePlayerYPos(FallVelocity);
+        gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
+        if (gPlayer.GetPlayerYPos() <= -1.5f) {
+            if (gPlayer.GetStage() == 1) {
+                gPlayer.SetPlayerXPos(stage1.x);
+                gPlayer.SetPlayerYPos(stage1.y);
+                gPlayer.SetPlayerZPos(stage1.z);
+                
+            }
+            else if (gPlayer.GetStage() == 2) {
+                gPlayer.SetPlayerXPos(stage2.x);
+                gPlayer.SetPlayerYPos(stage2.y);
+                gPlayer.SetPlayerZPos(stage2.z);
+              
+            }
+            gPlayer.ResetPlayerLookVec();
+            gCamera.ResetCamera();
+        }
+    }
+
+    if (gPlayer.GetPlayerZPos() < 15.0f && gPlayer.GetPlayerZPos() >= -4.0f) {
+        gPlayer.SetStage(1);
+    }
+    else if (gPlayer.GetPlayerZPos() < -4.0f && gPlayer.GetPlayerZPos() >= -10.0f) {
+        gPlayer.SetStage(2);
+    }
+
     glutTimerFunc(20, gInput.Timer, 0);
     glutPostRedisplay();
 }

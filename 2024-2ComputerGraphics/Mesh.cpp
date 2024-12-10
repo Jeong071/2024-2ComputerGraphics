@@ -117,3 +117,10 @@ void Cube::DeleteBuffer()
     glDeleteBuffers(1, &EBO);
 }
 
+void Cube::PrintCubeAABB()
+{
+    std::cout << "min - " << minPoint.x << ", " << minPoint.y << ", " << minPoint.z << std::endl;
+    std::cout << "max - " << maxPoint.x << ", " << maxPoint.y << ", " << maxPoint.z << std::endl;
+
+}
+

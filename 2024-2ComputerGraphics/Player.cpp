@@ -37,3 +37,25 @@ void Player::Rotate(glm::vec3& first, glm::vec3& last, float turnAngle)
     //last = first;
 
 }
+
+void Player::SetAABB(float x, float y, float z)
+{
+    mMinPoint.x = x - 0.05f;
+    mMinPoint.y = y;
+    mMinPoint.z = z - 0.05f;
+
+    mMaxPoint.x = x + 0.05f;
+    mMaxPoint.y = y + 0.1f;
+    mMaxPoint.z = z + 0.05f;
+}
+
+void Player::PrintPlayerAABB()
+{
+    std::cout<<"min - " << mMinPoint.x << ", " << mMinPoint.y << ", " << mMinPoint.z << std::endl;
+    std::cout << "max - " << mMaxPoint.x << ", " << mMaxPoint.y << ", " << mMaxPoint.z << std::endl;
+}
+
+void Player::PrintPlayerPos()
+{
+    std::cout << mPlayerXPos << ", " << mPlayerYPos << ", " << mPlayerZPos << std::endl;
+}
