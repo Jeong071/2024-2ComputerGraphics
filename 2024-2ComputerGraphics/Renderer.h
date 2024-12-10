@@ -15,6 +15,7 @@ public:
 	static void RenderStage1();
 	static void RenderStage2();
 	static void RenderStage3();
+	static void RenderSkyBox();
 
 private:
 	static std::vector<GLuint> textureIDs;

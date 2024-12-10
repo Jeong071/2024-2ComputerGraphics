@@ -73,7 +73,9 @@ GLvoid Renderer::RenderScene()
 	}
 
 	glUseProgram(shaderProgramID);
-
+	
+	
+	
 
 	//카메라 설정
 	glm::mat4 view = gCamera.getViewMatrix();
@@ -81,7 +83,7 @@ GLvoid Renderer::RenderScene()
 	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
 
 	glm::mat4 projection = gCamera.getProjectionMatrix(1280, 960);
-
+	
 	
 	Camera camera;
 	view = camera.getViewMatrix();
@@ -98,7 +100,10 @@ GLvoid Renderer::RenderScene()
 	glUniform3fv(glGetUniformLocation(shaderProgramID, "lightPos"), 1, glm::value_ptr(lightPos));
 	glUniform3fv(glGetUniformLocation(shaderProgramID, "lightColor"), 1, glm::value_ptr(lightColor));
 	glUniform1i(glGetUniformLocation(shaderProgramID, "lightOn"), lightOn);
-  
+	
+
+	
+
 	Cube d;
 	//d.draw();	
 	
@@ -149,6 +154,16 @@ GLvoid Renderer::RenderScene()
 	RenderStage2(); 	//2스테이지 끝 점 (-4, -0.1, -13) , (4, 0.1, -5)
 	RenderStage3();
 
+	glm::mat4 viewNoRotation = gCamera.getViewMatrix();
+	projection = gCamera.getProjectionMatrix(WIDTH,HEIGHT);
+	glm::mat4 viewNoTranslation = glm::mat4(glm::mat3(viewNoRotation));
+	// 셰이더 사용
+	glUseProgram(shaderProgramID);
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "view"), 1, GL_FALSE, glm::value_ptr(viewNoTranslation));
+
+	RenderSkyBox();
+
 	d.DeleteBuffer();
 	gModel.ReleaseBuffer();
 	glutSwapBuffers();
@@ -158,7 +173,7 @@ void Renderer::InitializeTextures() {
 	std::vector<std::string> textureFiles = {
 		"floor_texture.jpg", "enemy_body.png", "enemy_head_face.png",
 		"enemy_head.png", "enemy_nose.png", "enemy_arm.png", "enemy_underBody.png",
-		"enemy_leg.png"
+		"enemy_leg.png","front.jpg","back.jpg","left.jpg","right.jpg","bottom.jpg","top.jpg"
 	};
 
 	textureIDs = loadTextures(textureFiles);
@@ -722,6 +737,70 @@ GLvoid Renderer::RenderStage3() {
 	cube38.DeleteBuffer();
 
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 0);
+
+}
+
+void Renderer::RenderSkyBox()
+{
+	
+	glDepthFunc(GL_LEQUAL);
+
+
+	glFrontFace(GL_CW);
+	Cube skyBox;
+	skyBox.position = glm::vec3(0.0f, 0.0f, 0.0f);
+	skyBox.scale = glm::vec3(150.0f, 150.0f, 150.0f);
+	skyBox.rotationAngle = 0.0f;
+	skyBox.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+
+	
+
+	skyBox.updateModelMatrix();
+	
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(skyBox.modelMatrix));
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[8]);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
+
+	skyBox.draw(6, 0);//정면
+
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[9]);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
+
+	skyBox.draw(6, (void*)(6 * sizeof(unsigned int))); //후면
+
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[10]);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
+
+	skyBox.draw(6, (void*)(12 * sizeof(unsigned int))); //좌측 문제
+
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[11]);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
+
+	skyBox.draw(6, (void*)(18 * sizeof(unsigned int))); //우측
+
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[12]);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
+
+	skyBox.draw(6, (void*)(24 * sizeof(unsigned int))); //하단
+
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[13]);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
+
+	skyBox.draw(6, (void*)(30 * sizeof(unsigned int))); //상단
+
+	glFrontFace(GL_CCW);
+
+	skyBox.DeleteBuffer();
+
+	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 0);
+
+	glDepthFunc(GL_LESS);
 
 }
 

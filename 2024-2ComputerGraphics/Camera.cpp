@@ -17,7 +17,7 @@ glm::mat4 Camera::getViewMatrix() const {
 }
 
 glm::mat4 Camera::getProjectionMatrix(float width, float height) const {
-    return glm::perspective(glm::radians(70.0f), width / height, 0.1f, 100.0f);
+    return glm::perspective(glm::radians(70.0f), width / height, 0.1f, 300.0f);
 }
 
 glm::vec3 Camera::GetTarget() const

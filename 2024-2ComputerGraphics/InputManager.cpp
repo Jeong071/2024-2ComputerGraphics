@@ -122,23 +122,23 @@ GLvoid InputManager::Timer(int value)
     
     if (mKeys['w'] && mKeys['a']) {
         gPlayer.Rotate(cameraVec, playerVec, -45.0f);
-        gPlayer.MovePlayerXPos(-PLAYER_SPEED * sin(glm::radians(yaw)));
-        gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw)));
+        gPlayer.MovePlayerXPos(- PLAYER_SPEED * cos(glm::radians(yaw - 45.0f)));
+        gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw - 45.0f)));
     }
     else if (mKeys['w'] && mKeys['d']) {
         gPlayer.Rotate(cameraVec, playerVec, 45.0f);
-        gPlayer.MovePlayerXPos(-PLAYER_SPEED * -sin(glm::radians(yaw)));
-        gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw)));
+        gPlayer.MovePlayerXPos(-PLAYER_SPEED * cos(glm::radians(yaw + 45.0f)));
+        gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw + 45.0f)));
     }
     else if (mKeys['s'] && mKeys['a']) {
         gPlayer.Rotate(cameraVec, playerVec, -135.0f);
-        gPlayer.MovePlayerXPos(-PLAYER_SPEED * sin(glm::radians(yaw)));
-        gPlayer.MovePlayerZPos(-PLAYER_SPEED * -sin(glm::radians(yaw)));
+        gPlayer.MovePlayerXPos(-PLAYER_SPEED * cos(glm::radians(yaw - 135.0f)));
+        gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw - 135.0f)));
     }
     else if (mKeys['s'] && mKeys['d']) {
         gPlayer.Rotate(cameraVec, playerVec, 135.0f);
-        gPlayer.MovePlayerXPos(-PLAYER_SPEED * -sin(glm::radians(yaw)));
-        gPlayer.MovePlayerZPos(-PLAYER_SPEED * -sin(glm::radians(yaw)));
+        gPlayer.MovePlayerXPos(-PLAYER_SPEED * cos(glm::radians(yaw + 135.0f)));
+        gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw + 135.0f)));
     }
 
     else if (mKeys['w']) {
