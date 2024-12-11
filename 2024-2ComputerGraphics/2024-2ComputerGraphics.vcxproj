@@ -50,6 +50,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="FragmentShader.glsl" />
+    <None Include="Player.bin" />
     <None Include="VertexShader.glsl" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -17,7 +17,8 @@ int main(int argc, char** argv) {
 	Initialize init(0, 0, WIDTH, HEIGHT);
 	init.GLEWInit();
 
-	gModel.ParseObj("Player.obj");
+	gModel.ParseObj("Player.obj", "Player.bin");
+	gModel.LoadBinFile("Player.bin");
 	
     
 	glutWarpPointer(WIDTH / 2, HEIGHT / 2);

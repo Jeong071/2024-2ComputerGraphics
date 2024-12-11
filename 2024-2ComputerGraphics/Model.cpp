@@ -11,14 +11,28 @@ Model::~Model()
 {
 }
 
-void Model::ParseObj(const std::string& objFile)
+void Model::ParseObj(const std::string& objFile, const std::string& binFile)
 {
+    
+    if (std::filesystem::last_write_time(objFile) > std::filesystem::last_write_time(binFile)) {
+       // std::cout << "bin파일이 최신상태 입니다." << std::endl;
+        return;
+    }
+
     std::ifstream obj(objFile);
     if (!obj.is_open()) {
         std::cerr << "obj파일 열기 실패" << std::endl;
         return;
     }
 
+    
+    std::ofstream binary(binFile, std::ios::binary);
+    if (!binary.is_open()) {
+        std::cerr << "bin파일 열기 실패 " << std::endl;
+        return;
+    }
+
+    
     
     std::string line;
     while (std::getline(obj, line)) {
@@ -30,16 +44,19 @@ void Model::ParseObj(const std::string& objFile)
             glm::vec3 vertex;
             iss >> vertex.x >> vertex.y >> vertex.z;
             mPlayerVertices.push_back(vertex);
+            mVertexCount += 1;
         }
         else if (word == "vn") {
             glm::vec3 normal;
             iss >> normal.x >> normal.y >> normal.z;
             mPlayerVertexNormals.push_back(normal);
+            mVertexNormalCount += 1;
         }
         else if (word == "vt") {
             glm::vec2 texCoord;
             iss >> texCoord.x >> texCoord.y;
             mPlayerVertexTextures.push_back(texCoord);
+            mVertexTextureCount += 1;
         }
         else if (word == "f") {
             // 삼각형 면 파싱
@@ -70,23 +87,57 @@ void Model::ParseObj(const std::string& objFile)
                 faceVertices.push_back(face);
             }
 
-            if (faceVertices.size() != 3) {
-                throw std::runtime_error("Non-triangle face detected after triangulation.");
-            }
+           
 
             mPlayerFaces.push_back(faceVertices[0]);
             mPlayerFaces.push_back(faceVertices[1]);
             mPlayerFaces.push_back(faceVertices[2]);
+            mFaceCount += 1;
         }
+        
     }
-
+    binary.write(reinterpret_cast<char*>(mPlayerVertices.data()), mVertexCount * sizeof(glm::vec3));
+    binary.write(reinterpret_cast<char*>(mPlayerVertexNormals.data()), mVertexNormalCount * sizeof(glm::vec3));
+    binary.write(reinterpret_cast<char*>(mPlayerVertexTextures.data()), mVertexTextureCount * sizeof(glm::vec2));
+    binary.write(reinterpret_cast<char*>(mPlayerFaces.data()), mFaceCount * sizeof(Face));
     // 인덱스 배열 생성
     for (const auto& f : mPlayerFaces) {
         mPlayerIndex.push_back(f.vertexIndex);
         
     }
-
+    std::cout << "obj파싱" << std::endl;
 }
+
+void Model::LoadBinFile(const std::string& binFile)
+{
+    std::ifstream iBinFile(binFile, std::ios::binary);
+
+    mPlayerVertices.clear();
+    mPlayerVertexNormals.clear();
+    mPlayerVertexTextures.clear();
+    mPlayerFaces.clear();
+
+    mPlayerVertices.resize(mVertexCount);
+    mPlayerVertexNormals.resize(mVertexNormalCount);
+    mPlayerVertexTextures.resize(mVertexTextureCount);
+    mPlayerFaces.resize(mFaceCount);
+
+    iBinFile.seekg(0, std::ios::beg);
+    iBinFile.read(reinterpret_cast<char*>(mPlayerVertices.data()), sizeof(glm::vec3) * mVertexCount);
+
+    iBinFile.seekg(sizeof(glm::vec3) * mVertexCount, std::ios::beg);
+    iBinFile.read(reinterpret_cast<char*>(mPlayerVertexNormals.data()), sizeof(glm::vec3) * mVertexNormalCount);
+
+    iBinFile.seekg(sizeof(glm::vec3) * mVertexCount + sizeof(glm::vec3) * mVertexNormalCount, std::ios::beg);
+    iBinFile.read(reinterpret_cast<char*>(mPlayerVertexTextures.data()), sizeof(glm::vec2) * mVertexTextureCount);
+
+    iBinFile.seekg(sizeof(glm::vec3) * mVertexCount + sizeof(glm::vec3) * mVertexNormalCount + sizeof(glm::vec2) * mVertexTextureCount, std::ios::beg);
+    iBinFile.read(reinterpret_cast<char*>(mPlayerFaces.data()), sizeof(Face) * mFaceCount);
+    std::cout << "bin 파싱" << std::endl;
+}
+
+
+
 
 void Model::BindBuffer()
 {

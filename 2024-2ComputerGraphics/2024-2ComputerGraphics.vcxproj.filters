@@ -103,5 +103,8 @@
     <None Include="FragmentShader.glsl">
       <Filter>Resource</Filter>
     </None>
+    <None Include="Player.bin">
+      <Filter>Resource</Filter>
+    </None>
   </ItemGroup>
 </Project>
