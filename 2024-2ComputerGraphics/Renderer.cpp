@@ -305,13 +305,27 @@ GLvoid Renderer::RenderStage1() {
 	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
 
+
+	Cube temp;
+	temp.position = glm::vec3(0.0f, 0.0f, 6.0f);
+	temp.scale = glm::vec3(0.2f, 1.0f, 0.2f);
+	temp.rotationAngle = 0.0f;
+	temp.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	temp.updateModelMatrix();
+	temp.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(temp.modelMatrix));
+	temp.draw(36, 0);
+	temp.DeleteBuffer();
+	cubes.emplace_back(temp);
+
+
 	Cube cube1;
 	cube1.position = glm::vec3(0.0f, 0.0f, 8.0f);
 	cube1.scale = glm::vec3(1.0f, 0.2f, 1.0f);
 	cube1.rotationAngle = 0.0f;
 	cube1.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	cube1.updateModelMatrix();
-	cube1.updateBounds(); //min - -0.5, -0.1, 7.5   max - 0.5, 0.1, 8.5
+	cube1.updateBounds(); 
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube1.modelMatrix));
 	cube1.draw(36, 0);
 	cube1.DeleteBuffer();

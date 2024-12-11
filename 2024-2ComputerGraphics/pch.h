@@ -55,3 +55,4 @@ extern float rotateYAxis;
 #define SENSITIVITY		0.15
 #define DISTANCE		0.5
 #define FLOOR			0.3
+#define KEY_COUNT		256
