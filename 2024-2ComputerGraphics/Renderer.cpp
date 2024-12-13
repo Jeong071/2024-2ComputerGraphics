@@ -12,7 +12,7 @@ GLuint Renderer::shaderProgramID = 0;
 Camera gCamera;
 float playerAngle {0.0f};
 std::vector<Cube> Renderer::cubes;
-
+std::vector<Cube> Renderer::objCubes;
 
 std::vector<GLuint> loadTextures(const std::vector<std::string>& filenames) {
 	std::vector<GLuint> textureIDs;
@@ -104,7 +104,7 @@ GLvoid Renderer::RenderScene()
 	glUniform1i(glGetUniformLocation(shaderProgramID, "lightOn"), lightOn);
 	
 
-	
+	gInput.SetMovePlayer(1, 1, 1, 1);
 
 	Cube d;
 	//d.draw();	
@@ -158,6 +158,8 @@ GLvoid Renderer::RenderScene()
 	RenderStage2(); 	//2스테이지 끝 점 (-4, -0.1, -13) , (4, 0.1, -5)
 	RenderStage3();
 	ProcessCollision();
+	ProcessObjCubeCollision();
+
 	
 
 	glm::mat4 viewNoRotation = gCamera.getViewMatrix();
@@ -316,8 +318,8 @@ GLvoid Renderer::RenderStage1() {
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(temp.modelMatrix));
 	temp.draw(36, 0);
 	temp.DeleteBuffer();
-	cubes.emplace_back(temp);
-
+	objCubes.emplace_back(temp);
+	temp.PrintCubeAABB();
 
 	Cube cube1;
 	cube1.position = glm::vec3(0.0f, 0.0f, 8.0f);
@@ -865,20 +867,55 @@ void Renderer::RenderSkyBox()
 
 }
 
-void Renderer::ProcessCollision()
+void Renderer::ProcessObjCubeCollision()
 {
-	 bool collided = false;
-    for (Cube& b : cubes) {
+	 
+	 
+    for (Cube& b : objCubes) {
+		float cubeCenterX = (b.GetCubeMaxAABB().x + b.GetCubeMinAABB().x) / 2.0f;
+		float cubeCenterZ = (b.GetCubeMaxAABB().z + b.GetCubeMinAABB().z) / 2.0f;
         if (CheckCollision(b)) {
-            collided = true;
-            
+			float overLapX = std::min(gPlayer.GetMaxPoint().x, b.GetCubeMaxAABB().x) - std::max(gPlayer.GetMinPoint().x, b.GetCubeMinAABB().x);
+			float overLapZ = std::min(gPlayer.GetMaxPoint().z, b.GetCubeMaxAABB().z) - std::max(gPlayer.GetMinPoint().z, b.GetCubeMinAABB().z);
+			if (overLapX > overLapZ) { //z 충돌
+				if (gPlayer.GetPlayerZPos() > cubeCenterZ) { //앞에서 충돌
+					gPlayer.SetPlayerZPos(b.GetCubeMaxAABB().z + 0.05f);
+				}
+				else { // 뒤에서 충돌
+					gPlayer.SetPlayerZPos(b.GetCubeMinAABB().z - 0.05f);
+				}
+			}
+			else { //x충돌
+				if (gPlayer.GetPlayerXPos() > cubeCenterX) { //앞에서 충돌
+					gPlayer.SetPlayerXPos(b.GetCubeMaxAABB().x + 0.05f);
+				}
+				else { // 뒤에서 충돌
+					gPlayer.SetPlayerXPos(b.GetCubeMinAABB().x - 0.05f);
+				}
+			}
         }
+		
+		
     }
 
-    if (!gPlayer.GetIsJumping()) {
-        gPlayer.SetIsFalling(!collided);
-    }
+    
 	
+}
+
+
+void Renderer::ProcessCollision()
+{
+	bool collided = false;
+	for (Cube& b : cubes) {
+	if (CheckCollision(b)) {
+			collided = true;
+
+		}
+	}
+
+	if (!gPlayer.GetIsJumping()) {
+		gPlayer.SetIsFalling(!collided);
+	}
 }
 
 bool Renderer::CheckCollision(Cube& b)

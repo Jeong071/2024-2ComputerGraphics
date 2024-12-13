@@ -130,8 +130,8 @@ GLvoid InputManager::Timer(int value)
 
     else if (IsKeyDown('w') && !gPlayer.GetIsFalling()) {
         gPlayer.Rotate(cameraVec, playerVec, 0.0f);
-        gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw)));
         gPlayer.MovePlayerXPos(PLAYER_SPEED * -cos(glm::radians(yaw)));
+        gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw))); 
         gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
     }
     else if (IsKeyDown('s') && !gPlayer.GetIsFalling()) {
@@ -160,6 +160,10 @@ GLvoid InputManager::Timer(int value)
         jumpVelocity = 0.2f;
     }
     
+    if (IsKeyPressed('z')) {
+        gPlayer.PrintPlayerAABB();
+    }
+
     if (IsKeyPressed('v')) {
         isVirtualMouse = !isVirtualMouse;
     }

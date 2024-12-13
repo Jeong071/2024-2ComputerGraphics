@@ -17,12 +17,13 @@ public:
 	static bool IsKeyUp(unsigned char key);
 	static bool IsKeyDown(unsigned char key);
 	static void UpdateKeyState();
+	static void SetMovePlayer(int x, int y, int z, int w) { mMovePlayer[0] = x, mMovePlayer[1] = y, mMovePlayer[2] = z, mMovePlayer[3] = w; }
 
 private:
 
 	inline static unsigned char mCurrentKeyState[256]{ };
 	inline static unsigned char mPreviousKeyState[256]{ };
-	
+	inline static int mMovePlayer[4]	{1,1,1,1};
 
 	
 };

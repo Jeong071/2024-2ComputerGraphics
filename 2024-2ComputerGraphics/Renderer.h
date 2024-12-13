@@ -17,11 +17,13 @@ public:
 	static void RenderStage3();
 	static void RenderSkyBox();
 
+	static void ProcessObjCubeCollision();
 	static void ProcessCollision();
 	static bool CheckCollision(Cube& b);
 	static bool IsInCube(Cube& b);
 private:
 	static std::vector<GLuint> textureIDs;
 	static std::vector<Cube> cubes;
+	static std::vector<Cube> objCubes;
 	static GLuint shaderProgramID;
 };
