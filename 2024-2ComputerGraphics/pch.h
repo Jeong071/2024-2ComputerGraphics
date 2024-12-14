@@ -24,7 +24,7 @@
 #include "Model.h"
 #include "InputManager.h"
 #include "Player.h"
-
+#include "Timer.h"
 
 extern GLuint shaderProgramID;
 extern GLuint vertexShader;
