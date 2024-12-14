@@ -1,10 +1,17 @@
 #pragma once
-class Timer {
+
+class Timer
+{
 public:
-    explicit Timer(int interval);
+   explicit Timer(int interval);
     void start();
+	void UpdateFPS();
 
 private:
-    int interval_;
-    static void TimerFunc(int value);
+	int frameCount = 0;
+	float fps = 0.0f;
+	int previousTime = 0;
+  int interval_;
+   static void TimerFunc(int value);
 };
+

@@ -17,7 +17,7 @@ glm::mat4 Camera::getViewMatrix() const {
 }
 
 glm::mat4 Camera::getProjectionMatrix(float width, float height) const {
-    return glm::perspective(glm::radians(70.0f), width / height, 0.1f, 100.0f);
+    return glm::perspective(glm::radians(70.0f), width / height, 0.1f, 300.0f);
 }
 
 glm::vec3 Camera::GetTarget() const
@@ -49,4 +49,10 @@ void Camera::SetCameraTarget(float x, float y, float z)
     target = glm::vec3(2 * x - position[0],
                         2 * y - position[1],
                         2 * z - position[2]);
+}
+
+void Camera::ResetCamera()
+{
+    position = glm::vec3(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
+    target = normalize(glm::vec3(2 * gPlayer.GetPlayerXPos() - position[0], gPlayer.GetPlayerYPos(), 2 * gPlayer.GetPlayerZPos() - position[2]));
 }

@@ -12,9 +12,10 @@ public:
 
     void SetCameraPos(float x, float y, float z);
     void SetCameraTarget(float x, float y, float z);
+    void ResetCamera();
 
 private:
-    glm::vec3 position;
-    glm::vec3 target;
-    glm::vec3 upDirection;
+    glm::vec3 position{};
+    glm::vec3 target{};
+    glm::vec3 upDirection{};
 };

@@ -5,20 +5,23 @@ in vec3 FragPos;
 in vec3 Normal;
 in vec2 TexCoord;
 
-uniform vec3 lightPos;      // Á¶¸í À§Ä¡
-uniform vec3 lightColor;    // Á¶¸í »ö»ó
-uniform vec3 objectColor;   // °´Ã¼ »ö»ó
-uniform vec3 viewPos;       // Ä«¸Ş¶ó À§Ä¡
-uniform bool lightOn;
+uniform vec3 lightPos;      // ì¡°ëª… ìœ„ì¹˜
+uniform vec3 lightColor;    // ì¡°ëª… ìƒ‰ìƒ
+uniform vec3 objectColor;   // ê°ì²´ ìƒ‰ìƒ
+uniform vec3 viewPos;       // ì¹´ë©”ë¼ ìœ„ì¹˜
+uniform bool lightOn;       
+uniform float ambient;  //ì— ë¹„ì–¸íŠ¸ ì„¸ê¸°
 uniform sampler2D texture1;
-uniform bool useTexture;  // ÅØ½ºÃ³ »ç¿ë ¿©ºÎ¸¦ °áÁ¤ÇÏ´Â À¯´ÏÆû º¯¼ö Ãß°¡
+uniform bool useTexture;  // í…ìŠ¤ì²˜ ì‚¬ìš© ì—¬ë¶€ë¥¼ ê²°ì •í•˜ëŠ” ìœ ë‹ˆí¼ ë³€ìˆ˜ ì¶”ê°€
 
 void main() {
     vec4 texColor = texture(texture1, TexCoord);
-    vec3 effectiveColor = useTexture ? texColor.rgb : objectColor;  // ÅØ½ºÃ³ »ç¿ë ¿©ºÎ¿¡ µû¶ó »ö»ó °áÁ¤
+    vec3 effectiveColor = useTexture ? texColor.rgb : objectColor;  // í…ìŠ¤ì²˜ ì‚¬ìš© ì—¬ë¶€ì— ë”°ë¼ ìƒ‰ìƒ ê²°ì •
 
     // Ambient Lighting
-    vec3 ambientLight = 0.7 * lightColor * effectiveColor;
+
+    vec3 ambientLight = ambient * lightColor * effectiveColor;
+
 
     // Diffuse Lighting
     vec3 lightDir = normalize(lightPos - FragPos);
@@ -29,10 +32,10 @@ void main() {
     // Specular Lighting
     vec3 viewDir = normalize(viewPos - FragPos);
     vec3 reflectDir = reflect(-lightDir, norm);
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0),32);
     vec3 specular = spec * lightColor;
 
-    // Á¶¸í °á°ú °è»ê
+    // ì¡°ëª… ê²°ê³¼ ê³„ì‚°
     vec3 result = ambientLight + (lightOn ? (diffuse + specular) : vec3(0.0));
-    FragColor = vec4(result, useTexture ? texColor.a : 1.0);  // ÅØ½ºÃ³ÀÇ ¾ËÆÄ °ªÀ» Àû¿ëÇÏ°Å³ª ±âº»°ª 1 »ç¿ë
+    FragColor = vec4(result, useTexture ? texColor.a : 1.0);  // í…ìŠ¤ì²˜ì˜ ì•ŒíŒŒ ê°’ì„ ì ìš©í•˜ê±°ë‚˜ ê¸°ë³¸ê°’ 1 ì‚¬ìš©
 }
