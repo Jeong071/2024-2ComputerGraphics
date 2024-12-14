@@ -21,7 +21,7 @@ public:
 	static void RenderMissile(float startX, float startY, float startz);
 	static void RenderObstacle();
 	static void update();
-
+	static void SetWallZ(int x);
 
 
 
@@ -37,8 +37,10 @@ private:
 
 	static std::vector<GLuint> textureIDs;
 	static std::vector<Cube> cubes;
+	static std::vector<Cube> movingFloor;
 	static std::vector<Cube> objCubes;
-	std::vector<Cube> missiles;
+	static std::vector<Cube> obtacleCubes;
+	static std::vector<Cube> missiles;
 
 	static GLuint shaderProgramID;
 

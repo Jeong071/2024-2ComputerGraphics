@@ -41,7 +41,8 @@ void Cube::setupMesh() {
         -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,
          0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,
          0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,
-        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,
+        -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f
+
     };
 
     unsigned int cubeIndices[] = {
@@ -51,6 +52,7 @@ void Cube::setupMesh() {
         12, 13, 14, 12, 14, 15, // Right
         16, 17, 18, 16, 18, 19, // Bottom
         20, 21, 22, 20, 22, 23  // Top
+
     };
 
     glGenVertexArrays(1, &VAO);
@@ -77,6 +79,8 @@ void Cube::updateModelMatrix() {
     modelMatrix = glm::rotate(modelMatrix, glm::radians(rotationAngle), rotationAxis);
     modelMatrix = glm::scale(modelMatrix, scale);
 }
+
+
 
 void Cube::updateBounds() {
     glm::vec3 vertices[8] = {
@@ -119,6 +123,7 @@ void Cube::DeleteBuffer()
 
 void Cube::PrintCubeAABB()
 {
+    std::cout << "==============================================================" << std::endl;
     std::cout << "min - " << minPoint.x << ", " << minPoint.y << ", " << minPoint.z << std::endl;
     std::cout << "max - " << maxPoint.x << ", " << maxPoint.y << ", " << maxPoint.z << std::endl;
 
