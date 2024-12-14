@@ -18,7 +18,7 @@ void main() {
     vec3 effectiveColor = useTexture ? texColor.rgb : objectColor;  // 텍스처 사용 여부에 따라 색상 결정
 
     // Ambient Lighting
-    vec3 ambientLight = 0.3 * lightColor * effectiveColor;
+    vec3 ambientLight = 0.7 * lightColor * effectiveColor;
 
     // Diffuse Lighting
     vec3 lightDir = normalize(lightPos - FragPos);
