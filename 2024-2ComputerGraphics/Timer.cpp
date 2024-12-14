@@ -1,22 +1,34 @@
 #include "pch.h"
 #include "Timer.h"
 
+
 void Timer::UpdateFPS() {
     int currentTime = glutGet(GLUT_ELAPSED_TIME);
     frameCount++;
 
-    // 1ÃÊ(1000 ¹Ð¸®ÃÊ)°¡ Áö³µ´ÂÁö È®ÀÎ
+    // 1ï¿½ï¿½(1000 ï¿½Ð¸ï¿½ï¿½ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ È®ï¿½ï¿½
     if (currentTime - previousTime > 1000) {
         fps = frameCount * 1000.0f / (currentTime - previousTime);
         previousTime = currentTime;
         frameCount = 0;
 
-        // FPS¸¦ Æ÷ÇÔÇÑ »õ·Î¿î Ã¢ Á¦¸ñ »ý¼º
+        // FPSï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Î¿ï¿½ Ã¢ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         std::stringstream ss;
         ss << "OpenGL FPS: " << fps;
         std::string title = ss.str();
 
-        // Ã¢ Á¦¸ñ ¾÷µ¥ÀÌÆ®
+        // Ã¢ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®
         glutSetWindowTitle(title.c_str());
     }
+}
+Timer::Timer(int interval) : interval_(interval) {}
+
+void Timer::start() {
+    glutTimerFunc(interval_, TimerFunc, 0);
+}
+
+void Timer::TimerFunc(int value) {
+    glutTimerFunc(20, TimerFunc, 0);
+    glutPostRedisplay();
+
 }

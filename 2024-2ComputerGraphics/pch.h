@@ -5,7 +5,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#include <gl/glew.h> //--- ÇÊ¿äÇÑ Çì´õÆÄÀÏ include
+#include <gl/glew.h> //--- Ã‡ÃŠÂ¿Ã¤Ã‡Ã‘ Ã‡Ã¬Â´ÃµÃ†Ã„Ã€Ã include
 #include<gl/freeglut.h>
 #include <gl/freeglut_ext.h>
 #include <random>
@@ -28,7 +28,10 @@
 #include "Model.h"
 #include "InputManager.h"
 #include "Player.h"
+
 #include "Renderer.h"
+
+#include "Timer.h"
 
 
 extern GLuint shaderProgramID;
