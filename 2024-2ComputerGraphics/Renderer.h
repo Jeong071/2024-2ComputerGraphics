@@ -17,7 +17,7 @@ public:
 
 	static void RenderStage3();
 	static void RenderSkyBox();
-	static void RenderStage3();	
+	
 	static void RenderMissile(float startX, float startY, float startz);
 	static void RenderObstacle();
 	static void update();
@@ -38,11 +38,7 @@ private:
 	static std::vector<GLuint> textureIDs;
 	static std::vector<Cube> cubes;
 	static std::vector<Cube> objCubes;
-
 	std::vector<Cube> missiles;
-	std::vector<Cube> cubes;
-
-	static std::vector<GLuint> textureIDs;
 
 	static GLuint shaderProgramID;
 

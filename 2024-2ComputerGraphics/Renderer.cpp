@@ -12,7 +12,7 @@ SceneType currentScene = MAIN_MENU;
 std::vector<GLuint> Renderer::textureIDs{};
 GLuint Renderer::shaderProgramID = 0;
 Camera gCamera{};
-Timer gTimer{};
+Timer gTimer;
 float playerAngle {0.0f};
 std::vector<Cube> Renderer::cubes{};
 std::vector<Cube> Renderer::objCubes{};
@@ -104,22 +104,7 @@ GLvoid Renderer::RenderScene()
 		RenderPlayScene();
 	}
 
-	gModel.BindBuffer();
-	gModel.RenderPlayer();
-
-	//적 생성
-	RenderEnemy();
-
-	//스테이지 생성
-	RenderStage1();
-	RenderStage2(); 	//2스테이지 끝 점 (-4, -0.1, -13) , (4, 0.1, -5)
-	RenderStage3();
-	RenderObstacle();
-
-	update();
-
-	d.DeleteBuffer();
-	gModel.ReleaseBuffer();
+	
 
 	glutSwapBuffers();
 	gTimer.UpdateFPS();
@@ -131,13 +116,9 @@ void Renderer::InitializeTextures() {
 	std::vector<std::string> textureFiles = {
 		"floor_texture.jpg", "enemy_body.png", "enemy_head_face.png",
 		"enemy_head.png", "enemy_nose.png", "enemy_arm.png", "enemy_underBody.png",
-
 		"enemy_leg.png","front.jpg","back.jpg","left.jpg","right.jpg","bottom.jpg","top.jpg","Main.png",
-
 	 "missile_target.png" , "lava.png"
-
 	};
-
 	textureIDs = loadTextures(textureFiles);
 }
 
@@ -752,6 +733,154 @@ GLvoid Renderer::RenderStage3() {
 	cube38.DeleteBuffer();
 	cubes.emplace_back(cube38);
 
+	//이동 발판
+	Cube cube39;
+	cube39.position = glm::vec3(cube21.position.x - 1.0f, cube21.position.y, cube21.position.z + 10.0f + floorPosZ);
+	cube39.scale = glm::vec3(1.0f, 0.2f, 1.0f);
+	cube39.rotationAngle = 0.0f;
+	cube39.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	cube39.updateModelMatrix();
+	cube39.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube39.modelMatrix));
+	cube39.draw(36, 0);
+	cube39.DeleteBuffer();
+
+	Cube cube40;
+	cube40.position = glm::vec3(cube21.position.x + 1.0f, cube21.position.y, cube21.position.z + 10.0f + floorPosZ);
+	cube40.scale = glm::vec3(1.0f, 0.2f, 1.0f);
+	cube40.rotationAngle = 0.0f;
+	cube40.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	cube40.updateModelMatrix();
+	cube40.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube40.modelMatrix));
+	cube40.draw(36, 0);
+	cube40.DeleteBuffer();
+
+	Cube cube41;
+	cube41.position = glm::vec3(cube21.position.x - 1.0f, cube21.position.y, cube21.position.z + 6.0f + floorPosZ);
+	cube41.scale = glm::vec3(1.0f, 0.2f, 1.0f);
+	cube41.rotationAngle = 0.0f;
+	cube41.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	cube41.updateModelMatrix();
+	cube41.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube41.modelMatrix));
+	cube41.draw(36, 0);
+	cube41.DeleteBuffer();
+
+	Cube cube42;
+	cube42.position = glm::vec3(cube21.position.x + 1.0f, cube21.position.y, cube21.position.z + 6.0f + floorPosZ);
+	cube42.scale = glm::vec3(1.0f, 0.2f, 1.0f);
+	cube42.rotationAngle = 0.0f;
+	cube42.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	cube42.updateModelMatrix();
+	cube42.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube42.modelMatrix));
+	cube42.draw(36, 0);
+	cube42.DeleteBuffer();
+
+	Cube cube43;
+	cube43.position = glm::vec3(cube21.position.x - 1.0f, cube21.position.y, cube21.position.z + 2.0f + floorPosZ);
+	cube43.scale = glm::vec3(1.0f, 0.2f, 1.0f);
+	cube43.rotationAngle = 0.0f;
+	cube43.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	cube43.updateModelMatrix();
+	cube43.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube43.modelMatrix));
+	cube43.draw(36, 0);
+	cube43.DeleteBuffer();
+
+	Cube cube44;
+	cube44.position = glm::vec3(cube21.position.x + 1.0f, cube21.position.y, cube21.position.z + 2.0f + floorPosZ);
+	cube44.scale = glm::vec3(1.0f, 0.2f, 1.0f);
+	cube44.rotationAngle = 0.0f;
+	cube44.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	cube44.updateModelMatrix();
+	cube44.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube44.modelMatrix));
+	cube44.draw(36, 0);
+	cube44.DeleteBuffer();
+
+	Cube cube45;
+	cube45.position = glm::vec3(cube21.position.x - 1.0f, cube21.position.y, cube21.position.z - 2.0f + floorPosZ);
+	cube45.scale = glm::vec3(1.0f, 0.2f, 1.0f);
+	cube45.rotationAngle = 0.0f;
+	cube45.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	cube45.updateModelMatrix();
+	cube45.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube45.modelMatrix));
+	cube45.draw(36, 0);
+	cube45.DeleteBuffer();
+
+	Cube cube46;
+	cube46.position = glm::vec3(cube21.position.x + 1.0f, cube21.position.y, cube21.position.z - 2.0f + floorPosZ);
+	cube46.scale = glm::vec3(1.0f, 0.2f, 1.0f);
+	cube46.rotationAngle = 0.0f;
+	cube46.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	cube46.updateModelMatrix();
+	cube46.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube46.modelMatrix));
+	cube46.draw(36, 0);
+	cube46.DeleteBuffer();
+
+	Cube cube47;
+	cube47.position = glm::vec3(cube21.position.x - 1.0f, cube21.position.y, cube21.position.z - 6.0f + floorPosZ);
+	cube47.scale = glm::vec3(1.0f, 0.2f, 1.0f);
+	cube47.rotationAngle = 0.0f;
+	cube47.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	cube47.updateModelMatrix();
+	cube47.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube47.modelMatrix));
+	cube47.draw(36, 0);
+	cube47.DeleteBuffer();
+
+	Cube cube48;
+	cube48.position = glm::vec3(cube21.position.x + 1.0f, cube21.position.y, cube21.position.z - 6.0f + floorPosZ);
+	cube48.scale = glm::vec3(1.0f, 0.2f, 1.0f);
+	cube48.rotationAngle = 0.0f;
+	cube48.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	cube48.updateModelMatrix();
+	cube48.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube48.modelMatrix));
+	cube48.draw(36, 0);
+	cube48.DeleteBuffer();
+
+	Cube cube49;
+	cube49.position = glm::vec3(cube21.position.x - 1.0f, cube21.position.y, cube21.position.z - 10.0f + floorPosZ);
+	cube49.scale = glm::vec3(1.0f, 0.2f, 1.0f);
+	cube49.rotationAngle = 0.0f;
+	cube49.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	cube49.updateModelMatrix();
+	cube49.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube49.modelMatrix));
+	cube49.draw(36, 0);
+	cube49.DeleteBuffer();
+
+	Cube cube50;
+	cube50.position = glm::vec3(cube21.position.x + 1.0f, cube21.position.y, cube21.position.z - 10.0f + floorPosZ);
+	cube50.scale = glm::vec3(1.0f, 0.2f, 1.0f);
+	cube50.rotationAngle = 0.0f;
+	cube50.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	cube50.updateModelMatrix();
+	cube50.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube50.modelMatrix));
+	cube50.draw(36, 0);
+	cube50.DeleteBuffer();
+
+	//골인 지점
+	Cube cube51;
+	cube51.position = glm::vec3(0.0f, 0.0f, -51.5);
+	cube51.scale = glm::vec3(1.0f, 0.2f, 1.0f);
+	cube51.rotationAngle = 0.0f;
+	cube51.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	cube51.updateModelMatrix();
+	cube51.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube51.modelMatrix));
+	cube51.draw(36, 0);
+	cube51.DeleteBuffer();
+
+	
+
+
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 0);
 
 }
@@ -964,153 +1093,39 @@ GLvoid Renderer::RenderPlayScene()
 	glm::vec3 customColor(1.0f, 1.0f, 1.0f);
 	glUniform3fv(uniformColorLocation, 1, glm::value_ptr(customColor));
 
-	//이동 발판
-	Cube cube39;
-	cube39.position = glm::vec3(cube21.position.x - 1.0f, cube21.position.y, cube21.position.z + 10.0f + floorPosZ);
-	cube39.scale = glm::vec3(1.0f, 0.2f, 1.0f);
-	cube39.rotationAngle = 0.0f;
-	cube39.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	cube39.updateModelMatrix();
-	cube39.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube39.modelMatrix));
-	cube39.draw(36, 0);
-	cube39.DeleteBuffer();
-
-	Cube cube40;
-	cube40.position = glm::vec3(cube21.position.x + 1.0f, cube21.position.y, cube21.position.z + 10.0f + floorPosZ);
-	cube40.scale = glm::vec3(1.0f, 0.2f, 1.0f);
-	cube40.rotationAngle = 0.0f;
-	cube40.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	cube40.updateModelMatrix();
-	cube40.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube40.modelMatrix));
-	cube40.draw(36, 0);
-	cube40.DeleteBuffer();
-
-	Cube cube41;
-	cube41.position = glm::vec3(cube21.position.x - 1.0f, cube21.position.y, cube21.position.z + 6.0f + floorPosZ);
-	cube41.scale = glm::vec3(1.0f, 0.2f, 1.0f);
-	cube41.rotationAngle = 0.0f;
-	cube41.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	cube41.updateModelMatrix();
-	cube41.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube41.modelMatrix));
-	cube41.draw(36, 0);
-	cube41.DeleteBuffer();
-
-	Cube cube42;
-	cube42.position = glm::vec3(cube21.position.x + 1.0f, cube21.position.y, cube21.position.z + 6.0f + floorPosZ);
-	cube42.scale = glm::vec3(1.0f, 0.2f, 1.0f);
-	cube42.rotationAngle = 0.0f;
-	cube42.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	cube42.updateModelMatrix();
-	cube42.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube42.modelMatrix));
-	cube42.draw(36, 0);
-	cube42.DeleteBuffer();
-
-	Cube cube43;
-	cube43.position = glm::vec3(cube21.position.x - 1.0f, cube21.position.y, cube21.position.z + 2.0f + floorPosZ);
-	cube43.scale = glm::vec3(1.0f, 0.2f, 1.0f);
-	cube43.rotationAngle = 0.0f;
-	cube43.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	cube43.updateModelMatrix();
-	cube43.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube43.modelMatrix));
-	cube43.draw(36, 0);
-	cube43.DeleteBuffer();
-
-	Cube cube44;
-	cube44.position = glm::vec3(cube21.position.x + 1.0f, cube21.position.y, cube21.position.z + 2.0f + floorPosZ);
-	cube44.scale = glm::vec3(1.0f, 0.2f, 1.0f);
-	cube44.rotationAngle = 0.0f;
-	cube44.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	cube44.updateModelMatrix();
-	cube44.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube44.modelMatrix));
-	cube44.draw(36, 0);
-	cube44.DeleteBuffer();
-
-	Cube cube45;
-	cube45.position = glm::vec3(cube21.position.x - 1.0f, cube21.position.y, cube21.position.z - 2.0f + floorPosZ);
-	cube45.scale = glm::vec3(1.0f, 0.2f, 1.0f);
-	cube45.rotationAngle = 0.0f;
-	cube45.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	cube45.updateModelMatrix();
-	cube45.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube45.modelMatrix));
-	cube45.draw(36, 0);
-	cube45.DeleteBuffer();
-
-	Cube cube46;
-	cube46.position = glm::vec3(cube21.position.x + 1.0f, cube21.position.y, cube21.position.z - 2.0f + floorPosZ);
-	cube46.scale = glm::vec3(1.0f, 0.2f, 1.0f);
-	cube46.rotationAngle = 0.0f;
-	cube46.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	cube46.updateModelMatrix();
-	cube46.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube46.modelMatrix));
-	cube46.draw(36, 0);
-	cube46.DeleteBuffer();
-
-	Cube cube47;
-	cube47.position = glm::vec3(cube21.position.x - 1.0f, cube21.position.y, cube21.position.z - 6.0f + floorPosZ);
-	cube47.scale = glm::vec3(1.0f, 0.2f, 1.0f);
-	cube47.rotationAngle = 0.0f;
-	cube47.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	cube47.updateModelMatrix();
-	cube47.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube47.modelMatrix));
-	cube47.draw(36, 0);
-	cube47.DeleteBuffer();
-
-	Cube cube48;
-	cube48.position = glm::vec3(cube21.position.x + 1.0f, cube21.position.y, cube21.position.z - 6.0f + floorPosZ);
-	cube48.scale = glm::vec3(1.0f, 0.2f, 1.0f);
-	cube48.rotationAngle = 0.0f;
-	cube48.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	cube48.updateModelMatrix();
-	cube48.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube48.modelMatrix));
-	cube48.draw(36, 0);
-	cube48.DeleteBuffer();
-
-	Cube cube49;
-	cube49.position = glm::vec3(cube21.position.x - 1.0f, cube21.position.y, cube21.position.z - 10.0f + floorPosZ);
-	cube49.scale = glm::vec3(1.0f, 0.2f, 1.0f);
-	cube49.rotationAngle = 0.0f;
-	cube49.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	cube49.updateModelMatrix();
-	cube49.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube49.modelMatrix));
-	cube49.draw(36, 0);
-	cube49.DeleteBuffer();
-
-	Cube cube50;
-	cube50.position = glm::vec3(cube21.position.x + 1.0f, cube21.position.y, cube21.position.z - 10.0f + floorPosZ);
-	cube50.scale = glm::vec3(1.0f, 0.2f, 1.0f);
-	cube50.rotationAngle = 0.0f;
-	cube50.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	cube50.updateModelMatrix();
-	cube50.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube50.modelMatrix));
-	cube50.draw(36, 0);
-	cube50.DeleteBuffer();
-
-	//골인 지점
-	Cube cube51;
-	cube51.position = glm::vec3(0.0f, 0.0f, -51.5);
-	cube51.scale = glm::vec3(1.0f, 0.2f, 1.0f);
-	cube51.rotationAngle = 0.0f;
-	cube51.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	cube51.updateModelMatrix();
-	cube51.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube51.modelMatrix));
-	cube51.draw(36, 0);
-	cube51.DeleteBuffer();
 
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 0);
 
+
+	gModel.BindBuffer();
+	gModel.RenderPlayer();
+
+	//�� ����
+	RenderEnemy();
+
+	//�������� ����
+	RenderStage1();
+	RenderStage2(); 	//2�������� �� �� (-4, -0.1, -13) , (4, 0.1, -5)
+	RenderStage3();
+	ProcessCollision();
+	RenderObstacle();
+
+	update();
+
+
+
+	glm::mat4 viewNoRotation = gCamera.getViewMatrix();
+	projection = gCamera.getProjectionMatrix(WIDTH, HEIGHT);
+	glm::mat4 viewNoTranslation = glm::mat4(glm::mat3(viewNoRotation));
+	// ���̴� ���
+	glUseProgram(shaderProgramID);
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "view"), 1, GL_FALSE, glm::value_ptr(viewNoTranslation));
+
+	RenderSkyBox();
+
+
+	
 }
 
 GLvoid Renderer::RenderMissile(float startX, float startY, float startZ) {
@@ -1122,44 +1137,12 @@ GLvoid Renderer::RenderMissile(float startX, float startY, float startZ) {
 	Target.updateModelMatrix();
 	Target.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(Target.modelMatrix));
-	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[8]);
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[15]);
 	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
 	Target.draw(6, 0);
 	Target.DeleteBuffer();
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 0);
-
-
-	gModel.BindBuffer();
-	gModel.RenderPlayer();
-
-	//적 생성
-	RenderEnemy();
-
-	//스테이지 생성
-	RenderStage1();
-	RenderStage2(); 	//2스테이지 끝 점 (-4, -0.1, -13) , (4, 0.1, -5)
-	RenderStage3();
-	ProcessCollision();
-	//ProcessObjCubeCollision();
-
-
-
-	glm::mat4 viewNoRotation = gCamera.getViewMatrix();
-	projection = gCamera.getProjectionMatrix(WIDTH, HEIGHT);
-	glm::mat4 viewNoTranslation = glm::mat4(glm::mat3(viewNoRotation));
-	// 셰이더 사용
-	glUseProgram(shaderProgramID);
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "view"), 1, GL_FALSE, glm::value_ptr(viewNoTranslation));
-
-	RenderSkyBox();
-
-	d.DeleteBuffer();
-	gModel.ReleaseBuffer();
-}
-
-
 
 	glUniform3f(glGetUniformLocation(shaderProgramID, "objectColor"), 0.8f, 0.8f, 0.8f);
 	Cube Missile;
@@ -1230,7 +1213,7 @@ GLvoid Renderer::RenderMissile(float startX, float startY, float startZ) {
 	MissileFin4.draw(36, 0);
 	MissileFin4.DeleteBuffer();
 
-	Cube Collision; // 충돌체크용 큐브 (비가시)
+	Cube Collision; // �浹üũ�� ť�� (�񰡽�)
 	Collision.position = glm::vec3(Missile.position.x, Missile.position.y, Missile.position.z);
 	Collision.scale = glm::vec3(0.5f, 1.0f, 0.5f);
 	Collision.rotationAngle = 0.0f;
@@ -1240,9 +1223,8 @@ GLvoid Renderer::RenderMissile(float startX, float startY, float startZ) {
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(Collision.modelMatrix));
 
 }
-
 GLvoid Renderer::RenderObstacle() {
-	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[9]);
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[16]);
 	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
 

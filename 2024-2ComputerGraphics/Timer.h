@@ -3,6 +3,7 @@
 class Timer
 {
 public:
+	Timer() {};
    explicit Timer(int interval);
     void start();
 	void UpdateFPS();
