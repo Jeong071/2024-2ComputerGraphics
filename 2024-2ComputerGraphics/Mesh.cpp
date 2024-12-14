@@ -123,6 +123,7 @@ void Cube::DeleteBuffer()
 
 void Cube::PrintCubeAABB()
 {
+    std::cout << "==============================================================" << std::endl;
     std::cout << "min - " << minPoint.x << ", " << minPoint.y << ", " << minPoint.z << std::endl;
     std::cout << "max - " << maxPoint.x << ", " << maxPoint.y << ", " << maxPoint.z << std::endl;
 

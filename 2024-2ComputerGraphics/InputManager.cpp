@@ -347,6 +347,7 @@ GLvoid InputManager::Timer(int value)
         gPlayer.SetYaw(90.0f);
         playerAngle = 0.0f;
     }
+
     if (gPlayer.GetIsFalling()) {
         
         float FallVelocity{ 0.0f };
@@ -375,7 +376,7 @@ GLvoid InputManager::Timer(int value)
                 gPlayer.SetPlayerZPos(stage3.z);
 
             }
-            gPlayer.SetIsDeath(false);
+            //gPlayer.SetIsDeath(false);
             gPlayer.SetYaw(90.0f);
             playerAngle = 0.0f;
         }

@@ -54,7 +54,7 @@ public:
 private:
 	float mPlayerXPos{ 0.0f };
 	float mPlayerYPos{ 0.1f };
-	float mPlayerZPos{ -24.0f };
+	float mPlayerZPos{ 8.0f };
 
 	bool isJumping{ false };
 	bool isFalling{ false };

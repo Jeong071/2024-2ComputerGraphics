@@ -26,7 +26,7 @@ float floorPosZ = 0.0f;
 
 float wallMoveSpeed = 1.1f;
 float wallPosZ[5] = { -4.0f, -2.0f, 0.0f, 4.0f, 3.0f };
-float maxZ[5] = { 5.0f, 3.0f, 2.0f, 6.0f, 7.0f };
+float maxZ[5] = { 5.0f, 1.0f, -1.0f, 6.0f, 7.0f };
 float minZ[5] = { -5.0f, -4.0f, -7.0f, -2.0f, -1.0f };
 float direct[5] = { -1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
 //미사일 변수
@@ -976,7 +976,7 @@ void Renderer::ProcessCollision()
 {
 	bool collided = false;
 	gPlayer.SetIsOnMovingFloor(false);
-	gPlayer.SetIsDeath(false);
+	//gPlayer.SetIsDeath(false);
 	for (Cube& b : cubes) {
 	if (CheckCollision(b)) {
 			collided = true;
@@ -1270,9 +1270,11 @@ GLvoid Renderer::RenderObstacle() {
 	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
 
+	obtacleCubes.clear();
+
 	Cube stage3_movingWall1;
 	SetWallZ(0);
-	stage3_movingWall1.position = glm::vec3(0.0f, 0.7f, -19.5f + wallPosZ[0]);
+	stage3_movingWall1.position = glm::vec3(0.0f, 0.7f, -19.5f + wallPosZ[0]);//-24.5 ~ -14.5
 	stage3_movingWall1.scale = glm::vec3(0.5f, 1.2f, 0.2f);
 	stage3_movingWall1.rotationAngle = 0.0f;
 	stage3_movingWall1.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -1280,10 +1282,10 @@ GLvoid Renderer::RenderObstacle() {
 	stage3_movingWall1.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(stage3_movingWall1.modelMatrix));
 	stage3_movingWall1.draw(36, 0);
-	stage3_movingWall1.PrintCubeAABB();
 	obtacleCubes.emplace_back(stage3_movingWall1);
 	stage3_movingWall1.DeleteBuffer();
 
+	
 	Cube stage3_movingWall2;
 	SetWallZ(1);
 	stage3_movingWall2.position = glm::vec3(0.7f, 0.7f, -17.5f + wallPosZ[1]);
@@ -1292,6 +1294,7 @@ GLvoid Renderer::RenderObstacle() {
 	stage3_movingWall2.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	stage3_movingWall2.updateModelMatrix();
 	stage3_movingWall2.updateBounds();
+	
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(stage3_movingWall2.modelMatrix));
 	stage3_movingWall2.draw(36, 0);
 	obtacleCubes.emplace_back(stage3_movingWall2);
