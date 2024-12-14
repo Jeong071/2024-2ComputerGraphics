@@ -24,14 +24,14 @@ float enemyLegRotationAngle = 0.0f;
 float enemyArmRotationRate = 90.0f;
 float enemyLegRotationRate = 90.0f;
 //적 위치 벡터
-glm::vec enemyPos = glm::vec3(0.0f, 0.7f, 5.5f);
+glm::vec enemyPos = glm::vec3(0.0f, 0.6f, -9.0f);
 
 //지형 애니메이션 변수
 float lastTime = 0.0f;
 float floorMoveSpeed = 1.1f;
 float floorPosZ = 0.0f;
 
-float wallMoveSpeed = 1.1f;
+float wallMoveSpeeds[5] = { 1.1f, 1.1f, 1.1f, 1.1f, 1.1f }; 
 float wallPosZ[5] = {0.0f};
 
 //미사일 변수
@@ -145,9 +145,8 @@ GLvoid Renderer::RenderEnemy() {
 	enemyBody.scale = glm::vec3(0.4f, 0.2f, 0.2f);
 	enemyBody.rotationAngle = 0.0f;
 	enemyBody.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	//
-	enemyBody.modelMatrix = glm::mat4(1.0f);
 	enemyBody.updateModelMatrix();
+
 	enemyBody.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(enemyBody.modelMatrix));
 	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[1]);
@@ -1300,41 +1299,42 @@ GLvoid Renderer::update() {
 	float deltaTime = currentTime - lastTime;
 	lastTime = currentTime;
 
-	floorPosZ += floorMoveSpeed * deltaTime;
-	if (floorPosZ > 1.5f) {
-		floorMoveSpeed *= -1;
-	}
-	if (floorPosZ < -1.5f) {
-		floorMoveSpeed *= -1;
-	}
-	
-	float maxZ[] = { 5.0f, 7.0f, 9.0f, 3.0f, 1.0f };
-	float minZ[] = { -5.0f, -3.0f, -1.0f, -7.0f, -9.0f };
+	//floorPosZ += floorMoveSpeed * deltaTime;
+	//if (floorPosZ > 1.5f) {
+	//	floorMoveSpeed *= -1;
+	//}
+	//if (floorPosZ < -1.5f) {
+	//	floorMoveSpeed *= -1;
+	//}
+	//
+	//float maxZ[] = { 5.0f, 7.0f, 9.0f, 3.0f, 1.0f };
+	//float minZ[] = { -5.0f, -3.0f, -1.0f, -7.0f, -9.0f };
 
-	for (int i = 0; i < 2; i++) {
-		wallPosZ[i] += 2 * wallMoveSpeed * deltaTime;  // 두 번 업데이트하는 것을 한 줄로 간소화
+	//for (int i = 0; i < 5; i++) {
+	//	wallPosZ[i] += 2 * wallMoveSpeeds[i] * deltaTime;
 
-		// 경계값 체크 및 wallMoveSpeed 반전
-		if (wallPosZ[i] > maxZ[i] || wallPosZ[i] < minZ[i]) {
-			wallMoveSpeed *= -1;
-		}
-	}
-	for (int i = 0; i < missileYs.size(); i++) {
-		missileYs[i] -= missileSpeed * deltaTime;  // 각 미사일의 위치 갱신
-		if (missileYs[i] < 0.3f) {  // 범위 아래로 내려가면 새 위치 설정
-			missileYs[i] = dist(rng);
-		}
+	//	// 경계값 체크 및 wallMoveSpeed 반전
+	//	if (wallPosZ[i] > maxZ[i] || wallPosZ[i] < minZ[i]) {
+	//		wallMoveSpeeds[i] *= -1;
+	//	}
+	//}
 
-		// x, z 위치 계산
-		int xPositionIndex = i % 3; // 3개의 x축 위치 중 하나 선택
-		float xPosition = xPositionIndex == 0 ? -2 : xPositionIndex == 1 ? 0 : 2; // x축 위치 설정
-		float zPosition = -28.5 + (i / 3 * -4); // z축 위치 설정
-		if (i % 3 == 1) {
-			zPosition = -28.5 + (i / 3 * -4) - 2;
-		}
+	//for (int i = 0; i < missileYs.size(); i++) {
+	//	missileYs[i] -= missileSpeed * deltaTime;  // 각 미사일의 위치 갱신
+	//	if (missileYs[i] < 0.3f) {  // 범위 아래로 내려가면 새 위치 설정
+	//		missileYs[i] = dist(rng);
+	//	}
 
-		RenderMissile(xPosition, missileYs[i], zPosition);
-	}
+	//	// x, z 위치 계산
+	//	int xPositionIndex = i % 3; // 3개의 x축 위치 중 하나 선택
+	//	float xPosition = xPositionIndex == 0 ? -2 : xPositionIndex == 1 ? 0 : 2; // x축 위치 설정
+	//	float zPosition = -28.5 + (i / 3 * -4); // z축 위치 설정
+	//	if (i % 3 == 1) {
+	//		zPosition = -28.5 + (i / 3 * -4) - 2;
+	//	}
+
+	//	RenderMissile(xPosition, missileYs[i], zPosition);
+	//}
 
 	//몬스터 이동
 	enemyLegRotationAngle += enemyLegRotationRate * deltaTime;
