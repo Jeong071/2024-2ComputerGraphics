@@ -38,6 +38,7 @@ private:
 	static std::vector<GLuint> textureIDs;
 	static std::vector<Cube> cubes;
 	static std::vector<Cube> objCubes;
+	static std::vector<Cube> deathCubes;
 	std::vector<Cube> missiles;
 
 	static GLuint shaderProgramID;

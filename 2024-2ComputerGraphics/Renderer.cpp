@@ -16,6 +16,7 @@ Timer gTimer;
 float playerAngle {0.0f};
 std::vector<Cube> Renderer::cubes{};
 std::vector<Cube> Renderer::objCubes{};
+std::vector<Cube> Renderer::deathCubes{};
 
 //몬스터 이동
 bool isEnemyMoving = true;
@@ -24,7 +25,7 @@ float enemyLegRotationAngle = 0.0f;
 float enemyArmRotationRate = 90.0f;
 float enemyLegRotationRate = 90.0f;
 //적 위치 벡터
-glm::vec enemyPos = glm::vec3(0.0f, 0.6f, -9.0f);
+glm::vec enemyPos = glm::vec3(0.0f, 0.6f, 7.0f);
 
 //지형 애니메이션 변수
 float lastTime = 0.0f;
@@ -146,7 +147,6 @@ GLvoid Renderer::RenderEnemy() {
 	enemyBody.rotationAngle = 0.0f;
 	enemyBody.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	enemyBody.updateModelMatrix();
-
 	enemyBody.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(enemyBody.modelMatrix));
 	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[1]);
@@ -154,6 +154,17 @@ GLvoid Renderer::RenderEnemy() {
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
 	enemyBody.draw(36, 0);
 	enemyBody.DeleteBuffer();
+
+	//충돌판정용 큐브
+	Cube enemy;
+	enemy.position = glm::vec3(enemyPos.x, enemyPos.y - 0.1f, enemyPos.z);
+	enemy.scale = glm::vec3(0.5f, 1.0f, 0.4f);
+	enemy.rotationAngle = 0.0f;
+	enemy.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	enemy.updateModelMatrix();
+	enemy.updateBounds();
+	enemy.DeleteBuffer();
+	deathCubes.emplace_back(enemy);
 
 	Cube enemyHead;
 	enemyHead.position = glm::vec3(enemyBody.position.x + 0.0f, enemyBody.position.y + 0.185, enemyBody.position.z - 0.05f);
@@ -1228,8 +1239,8 @@ GLvoid Renderer::RenderMissile(float startX, float startY, float startZ) {
 	Collision.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	Collision.updateModelMatrix();
 	Collision.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(Collision.modelMatrix));
 
+	deathCubes.emplace_back(Collision);
 }
 GLvoid Renderer::RenderObstacle() {
 	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[16]);
