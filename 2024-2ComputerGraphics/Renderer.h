@@ -21,7 +21,7 @@ public:
 	static void RenderMissile(float startX, float startY, float startz);
 	static void RenderObstacle();
 	static void update();
-
+	
 
 
 
@@ -37,6 +37,7 @@ private:
 
 	static std::vector<GLuint> textureIDs;
 	static std::vector<Cube> cubes;
+	static std::vector<Cube> movingFloor;
 	static std::vector<Cube> objCubes;
 	static std::vector<Cube> obtacleCubes;
 	static std::vector<Cube> missiles;

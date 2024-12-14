@@ -298,6 +298,15 @@ GLvoid InputManager::Timer(int value)
         isVirtualMouse = !isVirtualMouse;
     }
 
+    if (gPlayer.GetIsGoal()) {
+        gPlayer.SetYaw(90.0f);
+        playerAngle = 0.0f;
+        gPlayer.SetStage(1);
+        gPlayer.SetPlayerXPos(stage1.x);
+        gPlayer.SetPlayerYPos(stage1.y);
+        gPlayer.SetPlayerZPos(stage1.z);
+        gPlayer.SetIsGoal(false);
+    }
     
     if (gPlayer.GetIsJumping()) {
         jumpVelocity += gravity * 1.0f/75.0f;
@@ -382,6 +391,9 @@ GLvoid InputManager::Timer(int value)
     else if (gPlayer.GetPlayerZPos() < -14.0f && gPlayer.GetPlayerZPos() >= -26.0f) {
         gPlayer.SetStage(3);
     }
+
+    
+
     UpdateKeyState();
     glutTimerFunc(16, gInput.Timer, 0);
     glutPostRedisplay();

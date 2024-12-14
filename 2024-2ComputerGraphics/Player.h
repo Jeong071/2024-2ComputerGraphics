@@ -33,6 +33,11 @@ public:
 	bool GetIsDeath() { return isDeath; }
 	void SetIsDeath(bool Death) { isDeath = Death; }
 
+	bool GetIsOnMovingFloor() { return isOnMovingFloor; }
+	void SetIsOnMovingFloor(bool moving) { isOnMovingFloor = moving; }
+	
+	bool GetIsGoal() { return isGoal; }
+	void SetIsGoal(bool goal) { isGoal = goal; }
 
 	void SetAABB(float x, float y, float z);
 	glm::vec3 GetMinPoint() { return mMinPoint; }
@@ -49,11 +54,13 @@ public:
 private:
 	float mPlayerXPos{ 0.0f };
 	float mPlayerYPos{ 0.1f };
-	float mPlayerZPos{ -18.0f };
+	float mPlayerZPos{ -24.0f };
 
 	bool isJumping{ false };
 	bool isFalling{ false };
 	bool isDeath{ false };
+	bool isOnMovingFloor{ false };
+	bool isGoal{ false };
 
 	glm::vec3 mPlayerLookVec{ 0.0f, 0.0f, -1.0f };
 

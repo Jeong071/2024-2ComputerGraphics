@@ -16,6 +16,7 @@ Timer gTimer;
 float playerAngle {0.0f};
 std::vector<Cube> Renderer::cubes{};
 std::vector<Cube> Renderer::objCubes{};
+std::vector<Cube> Renderer::movingFloor{};
 std::vector<Cube> Renderer::obtacleCubes{};
 std::vector<Cube> Renderer::missiles{};
 //지형 애니메이션 변수
@@ -24,7 +25,7 @@ float floorMoveSpeed = 1.1f;
 float floorPosZ = 0.0f;
 
 float wallMoveSpeed = 1.1f;
-float wallPosZ[5] = {0.0f};
+float wallPosZ[5] = { -4.0f, -2.0f, 0.0f, -2.0f, -1.0f };
 
 //미사일 변수
 float missileY = 5.0f;
@@ -118,7 +119,7 @@ void Renderer::InitializeTextures() {
 		"floor_texture.jpg", "enemy_body.png", "enemy_head_face.png",
 		"enemy_head.png", "enemy_nose.png", "enemy_arm.png", "enemy_underBody.png",
 		"enemy_leg.png","front.jpg","back.jpg","left.jpg","right.jpg","bottom.jpg","top.jpg","Main.png",
-	 "missile_target.png" , "lava.png"
+	 "missile_target.png" , "lava.png","bomb.png"
 	};
 	textureIDs = loadTextures(textureFiles);
 }
@@ -744,6 +745,7 @@ GLvoid Renderer::RenderStage3() {
 	cube39.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube39.modelMatrix));
 	cube39.draw(36, 0);
+	movingFloor.emplace_back(cube39);
 	cube39.DeleteBuffer();
 
 	Cube cube40;
@@ -755,6 +757,7 @@ GLvoid Renderer::RenderStage3() {
 	cube40.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube40.modelMatrix));
 	cube40.draw(36, 0);
+	movingFloor.emplace_back(cube40);
 	cube40.DeleteBuffer();
 
 	Cube cube41;
@@ -766,6 +769,7 @@ GLvoid Renderer::RenderStage3() {
 	cube41.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube41.modelMatrix));
 	cube41.draw(36, 0);
+	movingFloor.emplace_back(cube41);
 	cube41.DeleteBuffer();
 
 	Cube cube42;
@@ -777,6 +781,7 @@ GLvoid Renderer::RenderStage3() {
 	cube42.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube42.modelMatrix));
 	cube42.draw(36, 0);
+	movingFloor.emplace_back(cube42);
 	cube42.DeleteBuffer();
 
 	Cube cube43;
@@ -788,6 +793,7 @@ GLvoid Renderer::RenderStage3() {
 	cube43.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube43.modelMatrix));
 	cube43.draw(36, 0);
+	movingFloor.emplace_back(cube43);
 	cube43.DeleteBuffer();
 
 	Cube cube44;
@@ -799,6 +805,7 @@ GLvoid Renderer::RenderStage3() {
 	cube44.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube44.modelMatrix));
 	cube44.draw(36, 0);
+	movingFloor.emplace_back(cube44);
 	cube44.DeleteBuffer();
 
 	Cube cube45;
@@ -810,6 +817,7 @@ GLvoid Renderer::RenderStage3() {
 	cube45.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube45.modelMatrix));
 	cube45.draw(36, 0);
+	movingFloor.emplace_back(cube45);
 	cube45.DeleteBuffer();
 
 	Cube cube46;
@@ -821,6 +829,7 @@ GLvoid Renderer::RenderStage3() {
 	cube46.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube46.modelMatrix));
 	cube46.draw(36, 0);
+	movingFloor.emplace_back(cube46);
 	cube46.DeleteBuffer();
 
 	Cube cube47;
@@ -832,6 +841,7 @@ GLvoid Renderer::RenderStage3() {
 	cube47.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube47.modelMatrix));
 	cube47.draw(36, 0);
+	movingFloor.emplace_back(cube47);
 	cube47.DeleteBuffer();
 
 	Cube cube48;
@@ -843,6 +853,7 @@ GLvoid Renderer::RenderStage3() {
 	cube48.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube48.modelMatrix));
 	cube48.draw(36, 0);
+	movingFloor.emplace_back(cube38);
 	cube48.DeleteBuffer();
 
 	Cube cube49;
@@ -854,6 +865,7 @@ GLvoid Renderer::RenderStage3() {
 	cube49.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube49.modelMatrix));
 	cube49.draw(36, 0);
+	movingFloor.emplace_back(cube49);
 	cube49.DeleteBuffer();
 
 	Cube cube50;
@@ -865,6 +877,7 @@ GLvoid Renderer::RenderStage3() {
 	cube50.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube50.modelMatrix));
 	cube50.draw(36, 0);
+	movingFloor.emplace_back(cube50);
 	cube50.DeleteBuffer();
 
 	//골인 지점
@@ -877,6 +890,10 @@ GLvoid Renderer::RenderStage3() {
 	cube51.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube51.modelMatrix));
 	cube51.draw(36, 0);
+	if (CheckCollision(cube51)) {
+		currentScene = MAIN_MENU;
+		gPlayer.SetIsGoal(true);
+	}
 	cube51.DeleteBuffer();
 
 	
@@ -956,15 +973,24 @@ void Renderer::RenderSkyBox()
 void Renderer::ProcessCollision()
 {
 	bool collided = false;
+	gPlayer.SetIsOnMovingFloor(false);
 	for (Cube& b : cubes) {
 	if (CheckCollision(b)) {
-			//collided = true;
+			collided = true;
 
 		}
 	}
+	for (Cube& move : movingFloor) {
+			if (CheckCollision(move)) {
+				gPlayer.SetIsOnMovingFloor(true);
+				collided = true;
+			}
+		}
 	if (!gPlayer.GetIsJumping()) {
 		//gPlayer.SetIsFalling(!collided);
 	}
+
+	
 
 	for (Cube & o : obtacleCubes) {
 		if (CheckCollision(o)) {
@@ -1062,8 +1088,7 @@ GLvoid Renderer::RenderPlayScene()
 
 
 
-	Cube d;
-	//d.draw();	
+	
 
 	glm::mat4 playerMat = glm::mat4(1.0f);
 
@@ -1106,7 +1131,7 @@ GLvoid Renderer::RenderPlayScene()
 
 	gModel.BindBuffer();
 	gModel.RenderPlayer();
-
+	gModel.ReleaseBuffer();
 	//�� ����
 	RenderEnemy();
 
@@ -1226,7 +1251,9 @@ GLvoid Renderer::RenderMissile(float startX, float startY, float startZ) {
 	Collision.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	Collision.updateModelMatrix();
 	Collision.updateBounds();
-	if (Collision.position.y < 1.0f) {
+	
+	if (Collision.position.y < 0.5f) {
+		
 		if (CheckCollision(Collision)) {
 			gPlayer.SetIsDeath(true);
 		}
@@ -1309,21 +1336,30 @@ GLvoid Renderer::update() {
 	lastTime = currentTime;
 
 	floorPosZ += floorMoveSpeed * deltaTime;
+	if (gPlayer.GetIsOnMovingFloor()) {
+		gPlayer.MovePlayerZPos(floorMoveSpeed * deltaTime);
+	}
 	if (floorPosZ > 1.5f) {
+		floorPosZ = 1.5f;
 		floorMoveSpeed *= -1;
 	}
 	if (floorPosZ < -1.5f) {
+		floorPosZ = -1.5f;
 		floorMoveSpeed *= -1;
 	}
-	
-	float maxZ[] = { 5.0f, 7.0f, 9.0f, 3.0f, 1.0f };
-	float minZ[] = { -5.0f, -3.0f, -1.0f, -7.0f, -9.0f };
-
-	for (int i = 0; i < 2; i++) {
+	float maxZ[5] = { 5.0f, 3.0f, 1.0f, 2.0f, 4.0f };
+	float minZ[5] = { -5.0f, -3.0f, -3.0f, -5.0f, -4.0f };
+	for (int i = 0; i < 5; ++i) {
 		wallPosZ[i] += 2 * wallMoveSpeed * deltaTime;  // 두 번 업데이트하는 것을 한 줄로 간소화
 
 		// 경계값 체크 및 wallMoveSpeed 반전
 		if (wallPosZ[i] > maxZ[i] || wallPosZ[i] < minZ[i]) {
+			if (wallPosZ[i] > maxZ[i]) {
+				wallPosZ[i] = maxZ[i];
+			}
+			else if (wallPosZ[i] < minZ[i]) {
+				wallPosZ[i] = minZ[i];
+			}
 			wallMoveSpeed *= -1;
 		}
 	}
@@ -1346,4 +1382,5 @@ GLvoid Renderer::update() {
 
 
 }
+
 

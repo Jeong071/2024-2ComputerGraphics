@@ -53,7 +53,6 @@ extern glm::mat4 rotationMatrix;
 extern glm::vec3 rotationAxis;
 extern float rotateYAxis;
 
-
 enum SceneType {
     MAIN_MENU,
     GAME_PLAY,
