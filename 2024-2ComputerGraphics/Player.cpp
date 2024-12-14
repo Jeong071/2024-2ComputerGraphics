@@ -59,3 +59,23 @@ void Player::PrintPlayerPos()
 {
     std::cout << mPlayerXPos << ", " << mPlayerYPos << ", " << mPlayerZPos << std::endl;
 }
+
+glm::vec3 Player::CreateNewMinAABB(float x, float z)
+{
+    glm::vec3 result;
+    result.x = std::min(gPlayer.GetMinPoint().x, gPlayer.GetMinPoint().x + x);
+    result.y = gPlayer.GetMinPoint().y;
+    result.z = std::min(gPlayer.GetMinPoint().z, gPlayer.GetMinPoint().z + z);
+
+    return result;
+}
+
+glm::vec3 Player::CreateNewMaxAABB(float x, float z)
+{
+    glm::vec3 result;
+    result.x = std::max(gPlayer.GetMaxPoint().x, gPlayer.GetMaxPoint().x + x);
+    result.y = gPlayer.GetMinPoint().y;
+    result.z = std::max(gPlayer.GetMaxPoint().z, gPlayer.GetMaxPoint().z + z);
+
+    return result;
+}

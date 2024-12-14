@@ -30,7 +30,7 @@ void InputManager::Run()
     glutKeyboardFunc(Key);
     glutKeyboardUpFunc(keyUp);
     glutPassiveMotionFunc(MouseMotion);
-    glutTimerFunc(20, Timer, 0);
+    glutTimerFunc(16, Timer, 0);
 }
 bool InputManager::IsKeyPressed(unsigned char key) //직전 프레임 X - 현재 프레임 O
 {
@@ -56,6 +56,22 @@ void InputManager::UpdateKeyState()
         mPreviousKeyState[i] = mCurrentKeyState[i];
     }
 }
+
+bool InputManager::CheckCollision(glm::vec3 newMinAABB, glm::vec3 newMaxAABB, std::vector<Cube>& cube)
+{
+    for (Cube& b : cube) {
+        if ((newMaxAABB.x > b.GetCubeMinAABB().x && newMinAABB.x < b.GetCubeMaxAABB().x) &&
+            (newMaxAABB.y > b.GetCubeMinAABB().y && newMinAABB.y < b.GetCubeMaxAABB().y) &&
+            (newMaxAABB.z > b.GetCubeMinAABB().z && newMinAABB.z < b.GetCubeMaxAABB().z)) {
+            if (gPlayer.GetPlayerZPos() - 0.05f > b.GetCubeMaxAABB().z || gPlayer.GetPlayerZPos() + 0.05f < b.GetCubeMinAABB().z) mWallNum = 0;
+            else if (gPlayer.GetPlayerXPos() > b.GetCubeMaxAABB().x || gPlayer.GetPlayerXPos() < b.GetCubeMinAABB().x) mWallNum = 1;
+            return true;
+        }
+    };
+    return false;
+}
+
+
 
 GLvoid InputManager::Key(unsigned char key, int x, int y)
 {
@@ -102,66 +118,180 @@ GLvoid InputManager::Timer(int value)
     cameraVec = glm::normalize(cameraVec);
     glm::vec3 playerVec = glm::vec3(gPlayer.GetPlayerLookVec().x, 0.0f, gPlayer.GetPlayerLookVec().z);
     playerVec = glm::normalize(playerVec);
-    
-    if (IsKeyDown('w') && IsKeyDown('a') && !gPlayer.GetIsFalling()) {
-        gPlayer.Rotate(cameraVec, playerVec, -45.0f);
-        gPlayer.MovePlayerXPos(- PLAYER_SPEED * cos(glm::radians(yaw - 45.0f)));
-        gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw - 45.0f)));
-        gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
-    }
-    else if (IsKeyDown('w') && IsKeyDown('d') && !gPlayer.GetIsFalling()) {
-        gPlayer.Rotate(cameraVec, playerVec, 45.0f);
-        gPlayer.MovePlayerXPos(-PLAYER_SPEED * cos(glm::radians(yaw + 45.0f)));
-        gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw + 45.0f)));
-        gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
-    }
-    else if (IsKeyDown('s') && IsKeyDown('a') && !gPlayer.GetIsFalling()) {
-        gPlayer.Rotate(cameraVec, playerVec, -135.0f);
-        gPlayer.MovePlayerXPos(-PLAYER_SPEED * cos(glm::radians(yaw - 135.0f)));
-        gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw - 135.0f)));
-        gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
-    }
-    else if (IsKeyDown('s') && IsKeyDown('d') && !gPlayer.GetIsFalling()) {
-        gPlayer.Rotate(cameraVec, playerVec, 135.0f);
-        gPlayer.MovePlayerXPos(-PLAYER_SPEED * cos(glm::radians(yaw + 135.0f)));
-        gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw + 135.0f)));
-        gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
-    }
+    glm::vec3 newMinAABB;
+    glm::vec3 newMaxAABB;
+    std::vector<Cube> cube = gRenderer.GetCubeIdx();
+    if (currentScene == GAME_PLAY) {
+        if (IsKeyDown('w') && IsKeyDown('a') && !gPlayer.GetIsFalling()) {
+            newMinAABB = gPlayer.CreateNewMinAABB(-PLAYER_SPEED * cos(glm::radians(yaw - 45.0f)), -PLAYER_SPEED * sin(glm::radians(yaw - 45.0f)));
+            newMaxAABB = gPlayer.CreateNewMaxAABB(-PLAYER_SPEED * cos(glm::radians(yaw - 45.0f)), -PLAYER_SPEED * sin(glm::radians(yaw - 45.0f)));
+            gPlayer.Rotate(cameraVec, playerVec, -45.0f);
+            if (!CheckCollision(newMinAABB, newMaxAABB, cube)) {
+                gPlayer.MovePlayerXPos(-PLAYER_SPEED * cos(glm::radians(yaw - 45.0f)));
+                gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw - 45.0f)));
+            }
+            else {
+                if (mWallNum == 0) {
+                    gPlayer.MovePlayerXPos(-PLAYER_SPEED * cos(glm::radians(yaw - 45.0f)));
+                }
+                else if (mWallNum == 1) {
+                    gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw - 45.0f)));
+                }
+            }
 
-    else if (IsKeyDown('w') && !gPlayer.GetIsFalling()) {
-        gPlayer.Rotate(cameraVec, playerVec, 0.0f);
-        gPlayer.MovePlayerXPos(PLAYER_SPEED * -cos(glm::radians(yaw)));
-        gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw))); 
-        gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
-    }
-    else if (IsKeyDown('s') && !gPlayer.GetIsFalling()) {
-        gPlayer.Rotate(cameraVec, playerVec, 180.0f);
-        gPlayer.MovePlayerXPos(PLAYER_SPEED * cos(glm::radians(yaw)));
-        gPlayer.MovePlayerZPos(-PLAYER_SPEED * -sin(glm::radians(yaw)));
-        gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
-    }
-    else if (IsKeyDown('a') && !gPlayer.GetIsFalling()) {
-        gPlayer.Rotate(cameraVec, playerVec, -90.0f);
-        gPlayer.MovePlayerXPos(-PLAYER_SPEED * sin(glm::radians(yaw)));
-        gPlayer.MovePlayerZPos(PLAYER_SPEED * cos(glm::radians(yaw)));
-        gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
-    }
-    else if (IsKeyDown('d') && !gPlayer.GetIsFalling()) {
-        gPlayer.Rotate(cameraVec, playerVec, 90.0f);
-        gPlayer.MovePlayerXPos(-PLAYER_SPEED * -sin(glm::radians(yaw)));
-        gPlayer.MovePlayerZPos(PLAYER_SPEED * -cos(glm::radians(yaw)));
-        gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
-    }
 
-    if (IsKeyPressed(' ') && !gPlayer.GetIsJumping() && !gPlayer.GetIsFalling()) {
-        
-        gPlayer.SetIsJumping(true);
-        
-        jumpVelocity = 0.2f;
+        }
+        else if (IsKeyDown('w') && IsKeyDown('d') && !gPlayer.GetIsFalling()) {
+            newMinAABB = gPlayer.CreateNewMinAABB(-PLAYER_SPEED * cos(glm::radians(yaw + 45.0f)), -PLAYER_SPEED * sin(glm::radians(yaw + 45.0f)));
+            newMaxAABB = gPlayer.CreateNewMaxAABB(-PLAYER_SPEED * cos(glm::radians(yaw + 45.0f)), -PLAYER_SPEED * sin(glm::radians(yaw + 45.0f)));
+            gPlayer.Rotate(cameraVec, playerVec, 45.0f);
+            if (!CheckCollision(newMinAABB, newMaxAABB, cube)) {
+                gPlayer.MovePlayerXPos(-PLAYER_SPEED * cos(glm::radians(yaw + 45.0f)));
+                gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw + 45.0f)));
+            }
+            else {
+                if (mWallNum == 0) {
+                    gPlayer.MovePlayerXPos(-PLAYER_SPEED * cos(glm::radians(yaw + 45.0f)));
+                }
+                else if (mWallNum == 1) {
+                    gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw + 45.0f)));
+                }
+            }
+        }
+        else if (IsKeyDown('s') && IsKeyDown('a') && !gPlayer.GetIsFalling()) {
+            newMinAABB = gPlayer.CreateNewMinAABB(-PLAYER_SPEED * cos(glm::radians(yaw - 135.0f)), -PLAYER_SPEED * sin(glm::radians(yaw - 135.0f)));
+            newMaxAABB = gPlayer.CreateNewMaxAABB(-PLAYER_SPEED * cos(glm::radians(yaw - 135.0f)), -PLAYER_SPEED * sin(glm::radians(yaw - 135.0f)));
+            gPlayer.Rotate(cameraVec, playerVec, -135.0f);
+            if (!CheckCollision(newMinAABB, newMaxAABB, cube)) {
+                gPlayer.MovePlayerXPos(-PLAYER_SPEED * cos(glm::radians(yaw - 135.0f)));
+                gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw - 135.0f)));
+            }
+            else {
+                if (mWallNum == 0) {
+                    gPlayer.MovePlayerXPos(-PLAYER_SPEED * cos(glm::radians(yaw - 135.0f)));
+                }
+                else if (mWallNum == 1) {
+                    gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw - 135.0f)));
+                }
+            }
+
+        }
+        else if (IsKeyDown('s') && IsKeyDown('d') && !gPlayer.GetIsFalling()) {
+            newMinAABB = gPlayer.CreateNewMinAABB(-PLAYER_SPEED * cos(glm::radians(yaw + 135.0f)), -PLAYER_SPEED * sin(glm::radians(yaw + 135.0f)));
+            newMaxAABB = gPlayer.CreateNewMaxAABB(-PLAYER_SPEED * cos(glm::radians(yaw + 135.0f)), -PLAYER_SPEED * sin(glm::radians(yaw + 135.0f)));
+            gPlayer.Rotate(cameraVec, playerVec, 135.0f);
+            if (!CheckCollision(newMinAABB, newMaxAABB, cube)) {
+                gPlayer.MovePlayerXPos(-PLAYER_SPEED * cos(glm::radians(yaw + 135.0f)));
+                gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw + 135.0f)));
+            }
+            else {
+                if (mWallNum == 0) {
+                    gPlayer.MovePlayerXPos(-PLAYER_SPEED * cos(glm::radians(yaw + 135.0f)));
+                }
+                else if (mWallNum == 1) {
+                    gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw + 135.0f)));
+                }
+            }
+        }
+
+        else if (IsKeyDown('w') && !gPlayer.GetIsFalling()) {
+            newMinAABB = gPlayer.CreateNewMinAABB(PLAYER_SPEED * -cos(glm::radians(yaw)), -PLAYER_SPEED * sin(glm::radians(yaw)));
+            newMaxAABB = gPlayer.CreateNewMaxAABB(PLAYER_SPEED * -cos(glm::radians(yaw)), -PLAYER_SPEED * sin(glm::radians(yaw)));
+            gPlayer.Rotate(cameraVec, playerVec, 0.0f);
+            if (!CheckCollision(newMinAABB, newMaxAABB, cube)) {
+                gPlayer.MovePlayerXPos(PLAYER_SPEED * -cos(glm::radians(yaw)));
+                gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw)));
+            }
+            else {
+                if (mWallNum == 0) {
+                    gPlayer.MovePlayerXPos(PLAYER_SPEED * -cos(glm::radians(yaw)));
+                }
+                else if (mWallNum == 1) {
+                    gPlayer.MovePlayerZPos(-PLAYER_SPEED * sin(glm::radians(yaw)));
+                }
+            }
+
+        }
+        else if (IsKeyDown('s') && !gPlayer.GetIsFalling()) {
+            newMinAABB = gPlayer.CreateNewMinAABB(PLAYER_SPEED * cos(glm::radians(yaw)), -PLAYER_SPEED * -sin(glm::radians(yaw)));
+            newMaxAABB = gPlayer.CreateNewMaxAABB(PLAYER_SPEED * cos(glm::radians(yaw)), -PLAYER_SPEED * -sin(glm::radians(yaw)));
+            gPlayer.Rotate(cameraVec, playerVec, 180.0f);
+            if (!CheckCollision(newMinAABB, newMaxAABB, cube)) {
+                gPlayer.MovePlayerXPos(PLAYER_SPEED * cos(glm::radians(yaw)));
+                gPlayer.MovePlayerZPos(-PLAYER_SPEED * -sin(glm::radians(yaw)));
+            }
+            else {
+                if (mWallNum == 0) {
+                    gPlayer.MovePlayerXPos(PLAYER_SPEED * cos(glm::radians(yaw)));
+                }
+                else if (mWallNum == 1) {
+                    gPlayer.MovePlayerZPos(-PLAYER_SPEED * -sin(glm::radians(yaw)));
+                }
+            }
+
+        }
+        else if (IsKeyDown('a') && !gPlayer.GetIsFalling()) {
+            newMinAABB = gPlayer.CreateNewMinAABB(-PLAYER_SPEED * sin(glm::radians(yaw)), PLAYER_SPEED * cos(glm::radians(yaw)));
+            newMaxAABB = gPlayer.CreateNewMaxAABB(-PLAYER_SPEED * sin(glm::radians(yaw)), PLAYER_SPEED * cos(glm::radians(yaw)));
+            gPlayer.Rotate(cameraVec, playerVec, -90.0f);
+            if (!CheckCollision(newMinAABB, newMaxAABB, cube)) {
+                gPlayer.MovePlayerXPos(-PLAYER_SPEED * sin(glm::radians(yaw)));
+                gPlayer.MovePlayerZPos(PLAYER_SPEED * cos(glm::radians(yaw)));
+            }
+            else {
+                if (mWallNum == 0) {
+                    gPlayer.MovePlayerXPos(-PLAYER_SPEED * sin(glm::radians(yaw)));
+                }
+                else if (mWallNum == 1) {
+                    gPlayer.MovePlayerZPos(PLAYER_SPEED * cos(glm::radians(yaw)));
+                }
+            }
+        }
+        else if (IsKeyDown('d') && !gPlayer.GetIsFalling()) {
+            newMinAABB = gPlayer.CreateNewMinAABB(-PLAYER_SPEED * -sin(glm::radians(yaw)), PLAYER_SPEED * -cos(glm::radians(yaw)));
+            newMaxAABB = gPlayer.CreateNewMaxAABB(-PLAYER_SPEED * -sin(glm::radians(yaw)), PLAYER_SPEED * -cos(glm::radians(yaw)));
+            gPlayer.Rotate(cameraVec, playerVec, 90.0f);
+            if (!CheckCollision(newMinAABB, newMaxAABB, cube)) {
+                gPlayer.MovePlayerXPos(-PLAYER_SPEED * -sin(glm::radians(yaw)));
+                gPlayer.MovePlayerZPos(PLAYER_SPEED * -cos(glm::radians(yaw)));
+            }
+            else {
+                if (mWallNum == 0) {
+                    gPlayer.MovePlayerXPos(-PLAYER_SPEED * -sin(glm::radians(yaw)));
+                }
+                else if (mWallNum == 1) {
+                    gPlayer.MovePlayerZPos(PLAYER_SPEED * -cos(glm::radians(yaw)));
+                }
+            }
+
+        }
+
+        if (IsKeyPressed(' ') && !gPlayer.GetIsJumping() && !gPlayer.GetIsFalling()) {
+
+            gPlayer.SetIsJumping(true);
+
+            jumpVelocity = 0.16f;
+        }
+
+        if (IsKeyPressed('\r') && currentScene == MAIN_MENU) {
+            gPlayer.SetYaw(90.0f);
+            playerAngle = 0.0f;
+            currentScene = GAME_PLAY;
+        }
+
+        if (IsKeyPressed('z') && currentScene == GAME_PLAY) {
+            gPlayer.SetYaw(90.0f);
+            playerAngle = 0.0f;
+            gPlayer.SetPlayerXPos(stage1.x);
+            gPlayer.SetPlayerYPos(stage1.y);
+            gPlayer.SetPlayerZPos(stage1.z);
+            currentScene = MAIN_MENU;
+        }
     }
-    
-    if (IsKeyPressed('z')) {
-        gPlayer.PrintPlayerAABB();
+    if (IsKeyPressed('\r') && currentScene == MAIN_MENU) {
+        gPlayer.SetYaw(90.0f);
+        playerAngle = 0.0f;
+        currentScene = GAME_PLAY;
     }
 
     if (IsKeyPressed('v')) {
@@ -172,16 +302,17 @@ GLvoid InputManager::Timer(int value)
     if (gPlayer.GetIsJumping()) {
         jumpVelocity += gravity * 1.0f/75.0f;
         gPlayer.MovePlayerYPos(jumpVelocity);
-        gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
+       
 
         // 바닥에 도착했을 때
         if (gPlayer.GetPlayerYPos() <= 0.f) {
             gPlayer.SetPlayerYPos(0.1f);
-            gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
+            
             gPlayer.SetIsJumping(false);
             gPlayer.SetIsFalling(false);
             jumpVelocity = 0.0f;
         }
+        
     }
 
     if (gPlayer.GetIsFalling()) {
@@ -191,7 +322,7 @@ GLvoid InputManager::Timer(int value)
         FallVelocity += (gravity * 1.0f / 30.0f);
         
         gPlayer.MovePlayerYPos(FallVelocity);
-        gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
+        
         if (gPlayer.GetPlayerYPos() <= -1.5f) {
             if (gPlayer.GetStage() == 1) {
                 gPlayer.SetPlayerXPos(stage1.x);
@@ -209,8 +340,9 @@ GLvoid InputManager::Timer(int value)
             gPlayer.SetYaw(90.0f);
             playerAngle = 0.0f;
         }
+       
     }
-
+    gPlayer.SetAABB(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
     if (gPlayer.GetPlayerZPos() < 15.0f && gPlayer.GetPlayerZPos() >= -4.0f) {
         gPlayer.SetStage(1);
     }
@@ -218,7 +350,7 @@ GLvoid InputManager::Timer(int value)
         gPlayer.SetStage(2);
     }
     UpdateKeyState();
-    glutTimerFunc(20, gInput.Timer, 0);
+    glutTimerFunc(16, gInput.Timer, 0);
     glutPostRedisplay();
 }
 

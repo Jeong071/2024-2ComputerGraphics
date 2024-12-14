@@ -9,7 +9,8 @@ uniform vec3 lightPos;      // 조명 위치
 uniform vec3 lightColor;    // 조명 색상
 uniform vec3 objectColor;   // 객체 색상
 uniform vec3 viewPos;       // 카메라 위치
-uniform bool lightOn;
+uniform bool lightOn;       
+uniform float ambient;  //엠비언트 세기
 uniform sampler2D texture1;
 uniform bool useTexture;  // 텍스처 사용 여부를 결정하는 유니폼 변수 추가
 
@@ -18,7 +19,7 @@ void main() {
     vec3 effectiveColor = useTexture ? texColor.rgb : objectColor;  // 텍스처 사용 여부에 따라 색상 결정
 
     // Ambient Lighting
-    vec3 ambientLight = 0.5 * lightColor * effectiveColor;
+    vec3 ambientLight = ambient * lightColor * effectiveColor;
 
     // Diffuse Lighting
     vec3 lightDir = normalize(lightPos - FragPos);

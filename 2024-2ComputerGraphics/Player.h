@@ -30,6 +30,7 @@ public:
 	bool GetIsFalling() { return isFalling; }
 	void SetIsFalling(bool isFall) { isFalling = isFall; }
 
+
 	void SetAABB(float x, float y, float z);
 	glm::vec3 GetMinPoint() { return mMinPoint; }
 	glm::vec3 GetMaxPoint() { return mMaxPoint; }
@@ -38,6 +39,10 @@ public:
 
 	void SetStage(int a) { mPlayerStage = a; }
 	int GetStage() { return mPlayerStage; }
+
+	glm::vec3 CreateNewMinAABB(float x, float z);
+	glm::vec3 CreateNewMaxAABB(float x, float z);
+
 private:
 	float mPlayerXPos{ 0.0f };
 	float mPlayerYPos{ 0.1f };
@@ -53,8 +58,8 @@ private:
 	
 	int mPlayerStage {1};
 
-	glm::vec3 mMinPoint{-0.05f,0.1f,7.95f};
-	glm::vec3 mMaxPoint{0.05f,0.2f,8.05f};
+	glm::vec3 mMinPoint{-0.074f,0.1f,7.976f};
+	glm::vec3 mMaxPoint{0.074f,0.3f,8.024f};
 
 	
 };

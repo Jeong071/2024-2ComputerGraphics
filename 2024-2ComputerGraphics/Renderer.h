@@ -21,6 +21,11 @@ public:
 	static void ProcessCollision();
 	static bool CheckCollision(Cube& b);
 	static bool IsInCube(Cube& b);
+
+	static GLvoid RenderMainScene();
+	static GLvoid RenderPlayScene();
+
+	static std::vector<Cube> GetCubeIdx() { return objCubes; }
 private:
 	static std::vector<GLuint> textureIDs;
 	static std::vector<Cube> cubes;

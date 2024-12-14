@@ -7,9 +7,12 @@
 #include "stb_image.h"
 using namespace std;
 
+SceneType currentScene = MAIN_MENU;
+
 std::vector<GLuint> Renderer::textureIDs;
 GLuint Renderer::shaderProgramID = 0;
 Camera gCamera;
+Timer gTimer;
 float playerAngle {0.0f};
 std::vector<Cube> Renderer::cubes;
 std::vector<Cube> Renderer::objCubes;
@@ -76,112 +79,24 @@ GLvoid Renderer::RenderScene()
 
 	glUseProgram(shaderProgramID);
 	
+	if (currentScene == MAIN_MENU) {
+		RenderMainScene();
+	}
 	
-	
-
-	//카메라 설정
-	glm::mat4 view = gCamera.getViewMatrix();
-	GLint viewLoc = glGetUniformLocation(shaderProgramID, "view");
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
-	glm::mat4 projection = gCamera.getProjectionMatrix(1280, 960);
-	
-	
-	Camera camera;
-	view = camera.getViewMatrix();
-	projection = camera.getProjectionMatrix(1280, 960);
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "view"), 1, GL_FALSE, glm::value_ptr(view));
-
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-	
-	
-	glm::vec3 cameraPos = glm::vec3(0.0f, 1.3f, 3.0f); 
-	glm::vec3 lightPos(0.0f, 100.0f, 0.0f);
-	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
-	bool lightOn = true;
-	glUniform3fv(glGetUniformLocation(shaderProgramID, "lightPos"), 1, glm::value_ptr(lightPos));
-	glUniform3fv(glGetUniformLocation(shaderProgramID, "lightColor"), 1, glm::value_ptr(lightColor));
-	glUniform1i(glGetUniformLocation(shaderProgramID, "lightOn"), lightOn);
-	
-
-	gInput.SetMovePlayer(1, 1, 1, 1);
-
-	Cube d;
-	//d.draw();	
-	
-	glm::mat4 playerMat = glm::mat4(1.0f);
-	
-	
-	
-	playerMat = glm::translate(playerMat, glm::vec3(
-		gPlayer.GetPlayerXPos(),
-		gPlayer.GetPlayerYPos(),
-		gPlayer.GetPlayerZPos()
-	));
-	playerMat = rotate(playerMat, glm::radians(playerAngle), glm::vec3(0.0, rotateYAxis, 0.0));
-
-	playerMat = glm::scale(playerMat, glm::vec3(0.06f, 0.06f, 0.06f));
-	playerMat = glm::translate(playerMat, glm::vec3(0.0f, 1.3f, 0.0f));
-	gCamera.SetCameraPos(
-		gPlayer.GetPlayerXPos(),
-		gPlayer.GetPlayerYPos(),
-		gPlayer.GetPlayerZPos()
-	);
-	gCamera.SetCameraTarget(
-		gPlayer.GetPlayerXPos(),
-		gPlayer.GetPlayerYPos(),
-		gPlayer.GetPlayerZPos()
-	);
-
-	
-	GLint modelLoc = glGetUniformLocation(shaderProgramID, "model");
-	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(playerMat));
-
-	view = gCamera.getViewMatrix();
-	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
-
-	GLint uniformColorLocation = glGetUniformLocation(shaderProgramID, "objectColor");
-	glm::vec3 customColor(1.0f, 1.0f, 1.0f);
-	glUniform3fv(uniformColorLocation, 1, glm::value_ptr(customColor));
-
-	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 0);
-
-	
-	gModel.BindBuffer();
-	gModel.RenderPlayer();
-	
-	//적 생성
-	RenderEnemy();
-
-	//스테이지 생성
-	RenderStage1();
-	RenderStage2(); 	//2스테이지 끝 점 (-4, -0.1, -13) , (4, 0.1, -5)
-	RenderStage3();
-	ProcessCollision();
-	ProcessObjCubeCollision();
-
-	
-
-	glm::mat4 viewNoRotation = gCamera.getViewMatrix();
-	projection = gCamera.getProjectionMatrix(WIDTH,HEIGHT);
-	glm::mat4 viewNoTranslation = glm::mat4(glm::mat3(viewNoRotation));
-	// 셰이더 사용
-	glUseProgram(shaderProgramID);
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "view"), 1, GL_FALSE, glm::value_ptr(viewNoTranslation));
-
-	RenderSkyBox();
-
-	d.DeleteBuffer();
-	gModel.ReleaseBuffer();
+	else if (currentScene == GAME_PLAY) {
+		RenderPlayScene();
+	}
 	glutSwapBuffers();
+	gTimer.UpdateFPS();
 }
+
+
 
 void Renderer::InitializeTextures() {
 	std::vector<std::string> textureFiles = {
 		"floor_texture.jpg", "enemy_body.png", "enemy_head_face.png",
 		"enemy_head.png", "enemy_nose.png", "enemy_arm.png", "enemy_underBody.png",
-		"enemy_leg.png","front.jpg","back.jpg","left.jpg","right.jpg","bottom.jpg","top.jpg"
+		"enemy_leg.png","front.jpg","back.jpg","left.jpg","right.jpg","bottom.jpg","top.jpg","Main.png"
 	};
 
 	textureIDs = loadTextures(textureFiles);
@@ -319,7 +234,6 @@ GLvoid Renderer::RenderStage1() {
 	temp.draw(36, 0);
 	temp.DeleteBuffer();
 	objCubes.emplace_back(temp);
-	temp.PrintCubeAABB();
 
 	Cube cube1;
 	cube1.position = glm::vec3(0.0f, 0.0f, 8.0f);
@@ -867,40 +781,7 @@ void Renderer::RenderSkyBox()
 
 }
 
-void Renderer::ProcessObjCubeCollision()
-{
-	 
-	 
-    for (Cube& b : objCubes) {
-		float cubeCenterX = (b.GetCubeMaxAABB().x + b.GetCubeMinAABB().x) / 2.0f;
-		float cubeCenterZ = (b.GetCubeMaxAABB().z + b.GetCubeMinAABB().z) / 2.0f;
-        if (CheckCollision(b)) {
-			float overLapX = std::min(gPlayer.GetMaxPoint().x, b.GetCubeMaxAABB().x) - std::max(gPlayer.GetMinPoint().x, b.GetCubeMinAABB().x);
-			float overLapZ = std::min(gPlayer.GetMaxPoint().z, b.GetCubeMaxAABB().z) - std::max(gPlayer.GetMinPoint().z, b.GetCubeMinAABB().z);
-			if (overLapX > overLapZ) { //z 충돌
-				if (gPlayer.GetPlayerZPos() > cubeCenterZ) { //앞에서 충돌
-					gPlayer.SetPlayerZPos(b.GetCubeMaxAABB().z + 0.05f);
-				}
-				else { // 뒤에서 충돌
-					gPlayer.SetPlayerZPos(b.GetCubeMinAABB().z - 0.05f);
-				}
-			}
-			else { //x충돌
-				if (gPlayer.GetPlayerXPos() > cubeCenterX) { //앞에서 충돌
-					gPlayer.SetPlayerXPos(b.GetCubeMaxAABB().x + 0.05f);
-				}
-				else { // 뒤에서 충돌
-					gPlayer.SetPlayerXPos(b.GetCubeMinAABB().x - 0.05f);
-				}
-			}
-        }
-		
-		
-    }
 
-    
-	
-}
 
 
 void Renderer::ProcessCollision()
@@ -927,10 +808,153 @@ bool Renderer::CheckCollision(Cube& b)
 		(gPlayer.GetMaxPoint().z > b.GetCubeMinAABB().z && gPlayer.GetMinPoint().z < b.GetCubeMaxAABB().z);
 }
 
-bool Renderer::IsInCube(Cube& b)
+
+
+GLvoid Renderer::RenderMainScene()
 {
-	return (gPlayer.GetMaxPoint().x > b.GetCubeMinAABB().x && gPlayer.GetMinPoint().x < b.GetCubeMaxAABB().x)&&
-		(gPlayer.GetMaxPoint().z > b.GetCubeMinAABB().z && gPlayer.GetMinPoint().z < b.GetCubeMaxAABB().z);
+	glm::mat4 view = gCamera.getViewMatrix();
+	GLint viewLoc = glGetUniformLocation(shaderProgramID, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+	glm::mat4 projection = gCamera.getProjectionMatrix(1280, 960);
+
+
+	Camera camera;
+	view = camera.getViewMatrix();
+	projection = camera.getProjectionMatrix(1280, 960);
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "view"), 1, GL_FALSE, glm::value_ptr(view));
+
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
+
+	glm::vec3 cameraPos = glm::vec3(0.0f, 1.3f, 3.0f);
+	glm::vec3 lightPos(0.0f, 100.0f, 0.0f);
+	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+	bool lightOn = true;
+	glUniform3fv(glGetUniformLocation(shaderProgramID, "lightPos"), 1, glm::value_ptr(lightPos));
+	glUniform3fv(glGetUniformLocation(shaderProgramID, "lightColor"), 1, glm::value_ptr(lightColor));
+	glUniform1i(glGetUniformLocation(shaderProgramID, "lightOn"), lightOn);
+	
+	
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[14]);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
+	glUniform1f(glGetUniformLocation(shaderProgramID, "ambient"), 1.0);
+	
+	
+	Cube main;
+	main.position = glm::vec3(0.0f, 0.0f, 5.0f);
+	main.scale = glm::vec3(6.6f, 5.0f, 1.0f);
+	main.rotationAngle = 0.0f;
+	main.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	main.updateModelMatrix();
+	main.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(main.modelMatrix));
+	main.draw(6, 0);
+	main.DeleteBuffer();
+
+	
+	
+	glBindVertexArray(0);
+}
+
+GLvoid Renderer::RenderPlayScene()
+{
+	//카메라 설정
+	glm::mat4 view = gCamera.getViewMatrix();
+	GLint viewLoc = glGetUniformLocation(shaderProgramID, "view");
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+	glm::mat4 projection = gCamera.getProjectionMatrix(1280, 960);
+
+
+	Camera camera;
+	view = camera.getViewMatrix();
+	projection = camera.getProjectionMatrix(1280, 960);
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "view"), 1, GL_FALSE, glm::value_ptr(view));
+
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+
+
+	glm::vec3 cameraPos = glm::vec3(0.0f, 1.3f, 3.0f);
+	glm::vec3 lightPos(0.0f, 100.0f, 0.0f);
+	glm::vec3 lightColor(1.0f, 1.0f, 1.0f);
+	bool lightOn = true;
+	glUniform3fv(glGetUniformLocation(shaderProgramID, "lightPos"), 1, glm::value_ptr(lightPos));
+	glUniform3fv(glGetUniformLocation(shaderProgramID, "lightColor"), 1, glm::value_ptr(lightColor));
+	glUniform1i(glGetUniformLocation(shaderProgramID, "lightOn"), lightOn);
+	glUniform1f(glGetUniformLocation(shaderProgramID, "ambient"), 0.5);
+
+
+
+	Cube d;
+	//d.draw();	
+
+	glm::mat4 playerMat = glm::mat4(1.0f);
+
+
+
+	playerMat = glm::translate(playerMat, glm::vec3(
+		gPlayer.GetPlayerXPos(),
+		gPlayer.GetPlayerYPos(),
+		gPlayer.GetPlayerZPos()
+	));
+	playerMat = rotate(playerMat, glm::radians(playerAngle), glm::vec3(0.0, rotateYAxis, 0.0));
+
+	playerMat = glm::scale(playerMat, glm::vec3(0.06f, 0.06f, 0.06f));
+	playerMat = glm::translate(playerMat, glm::vec3(0.0f, 1.3f, 0.0f));
+
+	gCamera.SetCameraPos(
+		gPlayer.GetPlayerXPos(),
+		gPlayer.GetPlayerYPos(),
+		gPlayer.GetPlayerZPos()
+	);
+	gCamera.SetCameraTarget(
+		gPlayer.GetPlayerXPos(),
+		gPlayer.GetPlayerYPos(),
+		gPlayer.GetPlayerZPos()
+	);
+
+	GLint modelLoc = glGetUniformLocation(shaderProgramID, "model");
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(playerMat));
+
+	view = gCamera.getViewMatrix();
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+
+	GLint uniformColorLocation = glGetUniformLocation(shaderProgramID, "objectColor");
+	glm::vec3 customColor(1.0f, 1.0f, 1.0f);
+	glUniform3fv(uniformColorLocation, 1, glm::value_ptr(customColor));
+
+	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 0);
+
+
+	gModel.BindBuffer();
+	gModel.RenderPlayer();
+
+	//적 생성
+	RenderEnemy();
+
+	//스테이지 생성
+	RenderStage1();
+	RenderStage2(); 	//2스테이지 끝 점 (-4, -0.1, -13) , (4, 0.1, -5)
+	RenderStage3();
+	ProcessCollision();
+	//ProcessObjCubeCollision();
+
+
+
+	glm::mat4 viewNoRotation = gCamera.getViewMatrix();
+	projection = gCamera.getProjectionMatrix(WIDTH, HEIGHT);
+	glm::mat4 viewNoTranslation = glm::mat4(glm::mat3(viewNoRotation));
+	// 셰이더 사용
+	glUseProgram(shaderProgramID);
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "projection"), 1, GL_FALSE, glm::value_ptr(projection));
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "view"), 1, GL_FALSE, glm::value_ptr(viewNoTranslation));
+
+	RenderSkyBox();
+
+	d.DeleteBuffer();
+	gModel.ReleaseBuffer();
 }
 
 
