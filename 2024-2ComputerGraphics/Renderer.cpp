@@ -16,7 +16,8 @@ Timer gTimer;
 float playerAngle {0.0f};
 std::vector<Cube> Renderer::cubes{};
 std::vector<Cube> Renderer::objCubes{};
-
+std::vector<Cube> Renderer::obtacleCubes{};
+std::vector<Cube> Renderer::missiles{};
 //지형 애니메이션 변수
 float lastTime = 0.0f;
 float floorMoveSpeed = 1.1f;
@@ -577,15 +578,15 @@ GLvoid Renderer::RenderStage3() {
 	cubes.emplace_back(cube25);
 
 	Cube cube26;
-	cube23.position = glm::vec3(cube21.position.x - 2.0f, cube21.position.y, cube21.position.z + 6.0f);
-	cube23.scale = glm::vec3(1.0f, 0.2f, 1.0f);
-	cube23.rotationAngle = 0.0f;
-	cube23.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	cube23.updateModelMatrix();
-	cube23.updateBounds();
+	cube26.position = glm::vec3(cube21.position.x - 2.0f, cube21.position.y, cube21.position.z + 6.0f);
+	cube26.scale = glm::vec3(1.0f, 0.2f, 1.0f);
+	cube26.rotationAngle = 0.0f;
+	cube26.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	cube26.updateModelMatrix();
+	cube26.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube23.modelMatrix));
-	cube23.draw(36, 0);
-	cube23.DeleteBuffer();
+	cube26.draw(36, 0);
+	cube26.DeleteBuffer();
 	cubes.emplace_back(cube26);
 
 	Cube cube27;
@@ -957,14 +958,20 @@ void Renderer::ProcessCollision()
 	bool collided = false;
 	for (Cube& b : cubes) {
 	if (CheckCollision(b)) {
-			collided = true;
+			//collided = true;
 
 		}
 	}
-
 	if (!gPlayer.GetIsJumping()) {
-		gPlayer.SetIsFalling(!collided);
+		//gPlayer.SetIsFalling(!collided);
 	}
+
+	for (Cube & o : obtacleCubes) {
+		if (CheckCollision(o)) {
+			//gPlayer.SetIsDeath(true);
+		}
+	}
+	
 }
 
 bool Renderer::CheckCollision(Cube& b)
@@ -1107,9 +1114,8 @@ GLvoid Renderer::RenderPlayScene()
 	RenderStage1();
 	RenderStage2(); 	//2�������� �� �� (-4, -0.1, -13) , (4, 0.1, -5)
 	RenderStage3();
-	ProcessCollision();
 	RenderObstacle();
-
+	ProcessCollision();
 	update();
 
 
@@ -1220,8 +1226,14 @@ GLvoid Renderer::RenderMissile(float startX, float startY, float startZ) {
 	Collision.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	Collision.updateModelMatrix();
 	Collision.updateBounds();
+	if (Collision.position.y < 1.0f) {
+		if (CheckCollision(Collision)) {
+			gPlayer.SetIsDeath(true);
+		}
+	}
+	
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(Collision.modelMatrix));
-
+	Collision.DeleteBuffer();
 }
 GLvoid Renderer::RenderObstacle() {
 	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[16]);
@@ -1237,6 +1249,7 @@ GLvoid Renderer::RenderObstacle() {
 	stage3_movingWall1.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(stage3_movingWall1.modelMatrix));
 	stage3_movingWall1.draw(36, 0);
+	obtacleCubes.emplace_back(stage3_movingWall1);
 	stage3_movingWall1.DeleteBuffer();
 
 	Cube stage3_movingWall2;
@@ -1248,6 +1261,7 @@ GLvoid Renderer::RenderObstacle() {
 	stage3_movingWall2.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(stage3_movingWall2.modelMatrix));
 	stage3_movingWall2.draw(36, 0);
+	obtacleCubes.emplace_back(stage3_movingWall2);
 	stage3_movingWall2.DeleteBuffer();
 
 	Cube stage3_movingWall3;
@@ -1259,6 +1273,7 @@ GLvoid Renderer::RenderObstacle() {
 	stage3_movingWall3.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(stage3_movingWall3.modelMatrix));
 	stage3_movingWall3.draw(36, 0);
+	obtacleCubes.emplace_back(stage3_movingWall3);
 	stage3_movingWall3.DeleteBuffer();
 
 	Cube stage3_movingWall4;
@@ -1270,6 +1285,7 @@ GLvoid Renderer::RenderObstacle() {
 	stage3_movingWall4.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(stage3_movingWall4.modelMatrix));
 	stage3_movingWall4.draw(36, 0);
+	obtacleCubes.emplace_back(stage3_movingWall4);
 	stage3_movingWall4.DeleteBuffer();
 
 	Cube stage3_movingWall5;
@@ -1281,6 +1297,7 @@ GLvoid Renderer::RenderObstacle() {
 	stage3_movingWall5.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(stage3_movingWall5.modelMatrix));
 	stage3_movingWall5.draw(36, 0);
+	obtacleCubes.emplace_back(stage3_movingWall5);
 	stage3_movingWall5.DeleteBuffer();
 
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 0);

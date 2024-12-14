@@ -12,8 +12,8 @@ const float gravity = -0.98f; // 중력 가속도
 float positionY = 0.0f;
 
 glm::vec3 stage1 = glm::vec3(0.0f, 0.1f, 8.0f);
-glm::vec3 stage2 = glm::vec3(0.0f, 0.1f, -14.0f);
-glm::vec3 stage3 = glm::vec3(0.0f, 0.1f, 8.0f);
+glm::vec3 stage2 = glm::vec3(0.0f, 0.1f, -4.0f);
+glm::vec3 stage3 = glm::vec3(0.0f, 0.1f, -14.0f);
 
 
 InputManager::InputManager()
@@ -314,7 +314,30 @@ GLvoid InputManager::Timer(int value)
         }
         
     }
+    if (gPlayer.GetIsDeath()) {
+        if (gPlayer.GetStage() == 1) {
+            gPlayer.SetPlayerXPos(stage1.x);
+            gPlayer.SetPlayerYPos(stage1.y);
+            gPlayer.SetPlayerZPos(stage1.z);
 
+
+        }
+        else if (gPlayer.GetStage() == 2) {
+            gPlayer.SetPlayerXPos(stage2.x);
+            gPlayer.SetPlayerYPos(stage2.y);
+            gPlayer.SetPlayerZPos(stage2.z);
+
+        }
+        else if (gPlayer.GetStage() == 3) {
+            gPlayer.SetPlayerXPos(stage3.x);
+            gPlayer.SetPlayerYPos(stage3.y);
+            gPlayer.SetPlayerZPos(stage3.z);
+
+        }
+        gPlayer.SetIsDeath(false);
+        gPlayer.SetYaw(90.0f);
+        playerAngle = 0.0f;
+    }
     if (gPlayer.GetIsFalling()) {
         
         float FallVelocity{ 0.0f };
@@ -337,6 +360,13 @@ GLvoid InputManager::Timer(int value)
                 gPlayer.SetPlayerZPos(stage2.z);
               
             }
+            else if (gPlayer.GetStage() == 3) {
+                gPlayer.SetPlayerXPos(stage3.x);
+                gPlayer.SetPlayerYPos(stage3.y);
+                gPlayer.SetPlayerZPos(stage3.z);
+
+            }
+            gPlayer.SetIsDeath(false);
             gPlayer.SetYaw(90.0f);
             playerAngle = 0.0f;
         }
@@ -346,8 +376,11 @@ GLvoid InputManager::Timer(int value)
     if (gPlayer.GetPlayerZPos() < 15.0f && gPlayer.GetPlayerZPos() >= -4.0f) {
         gPlayer.SetStage(1);
     }
-    else if (gPlayer.GetPlayerZPos() < -4.0f && gPlayer.GetPlayerZPos() >= -12.0f) {
+    else if (gPlayer.GetPlayerZPos() < -4.0f && gPlayer.GetPlayerZPos() >= -14.0f) {
         gPlayer.SetStage(2);
+    }
+    else if (gPlayer.GetPlayerZPos() < -14.0f && gPlayer.GetPlayerZPos() >= -26.0f) {
+        gPlayer.SetStage(3);
     }
     UpdateKeyState();
     glutTimerFunc(16, gInput.Timer, 0);
