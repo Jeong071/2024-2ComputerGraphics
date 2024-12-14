@@ -1,12 +1,12 @@
 #pragma once
 class Cube {
 public:
-    unsigned int VAO, VBO, EBO;
-    glm::vec3 position, scale;
-    float rotationAngle;
-    glm::vec3 rotationAxis;
-    glm::vec3 minPoint, maxPoint; // 두 점
-    glm::mat4 modelMatrix;
+    unsigned int VAO{}, VBO{}, EBO{};
+    glm::vec3 position{}, scale{};
+    float rotationAngle{};
+    glm::vec3 rotationAxis{};
+    glm::vec3 minPoint{}, maxPoint{}; // 두 점
+    glm::mat4 modelMatrix{};
 
     Cube();
     ~Cube();

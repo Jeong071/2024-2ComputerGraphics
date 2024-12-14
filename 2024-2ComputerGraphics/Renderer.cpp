@@ -9,13 +9,13 @@ using namespace std;
 
 SceneType currentScene = MAIN_MENU;
 
-std::vector<GLuint> Renderer::textureIDs;
+std::vector<GLuint> Renderer::textureIDs{};
 GLuint Renderer::shaderProgramID = 0;
-Camera gCamera;
-Timer gTimer;
+Camera gCamera{};
+Timer gTimer{};
 float playerAngle {0.0f};
-std::vector<Cube> Renderer::cubes;
-std::vector<Cube> Renderer::objCubes;
+std::vector<Cube> Renderer::cubes{};
+std::vector<Cube> Renderer::objCubes{};
 
 std::vector<GLuint> loadTextures(const std::vector<std::string>& filenames) {
 	std::vector<GLuint> textureIDs;

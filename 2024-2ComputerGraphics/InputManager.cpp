@@ -5,7 +5,7 @@
 bool isVirtualMouse{ true };
 
 float firstAngle = playerAngle;
-glm::vec3 rotationAxis;
+glm::vec3 rotationAxis{};
 float rotateYAxis{1.0f};
 float jumpVelocity = 0.0f;
 const float gravity = -0.98f; // 중력 가속도 

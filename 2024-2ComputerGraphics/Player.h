@@ -58,8 +58,8 @@ private:
 	
 	int mPlayerStage {1};
 
-	glm::vec3 mMinPoint{-0.074f,0.1f,7.976f};
-	glm::vec3 mMaxPoint{0.074f,0.3f,8.024f};
+	glm::vec3 mMinPoint{-0.05f,0.1f,7.95f};
+	glm::vec3 mMaxPoint{0.05f,0.3f,8.05f};
 
 	
 };

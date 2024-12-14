@@ -2,13 +2,13 @@
 #include "pch.h"
 #include "Renderer.h"
 
-GLuint shaderProgramID;
-GLuint vertexShader;
-GLuint fragmentShader;
+GLuint shaderProgramID{};
+GLuint vertexShader{};
+GLuint fragmentShader{};
 
 glm::mat4 rotMatrix = glm::mat4(1.0f);
 
-Model gModel;
+Model gModel{};
 
 
 int main(int argc, char** argv) {
@@ -18,7 +18,7 @@ int main(int argc, char** argv) {
 	init.GLEWInit();
 
 	gModel.ParseObj("Player.obj", "Player.bin");
-	gModel.LoadBinFile("Player.bin");
+	//gModel.LoadBinFile("Player.bin");
 	
     
 	glutWarpPointer(WIDTH / 2, HEIGHT / 2);
@@ -31,4 +31,5 @@ int main(int argc, char** argv) {
 	gInput.Run();
 	
 	glutMainLoop();
+	return 0;
 }

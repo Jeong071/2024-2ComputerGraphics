@@ -15,7 +15,7 @@ public:
     void ResetCamera();
 
 private:
-    glm::vec3 position;
-    glm::vec3 target;
-    glm::vec3 upDirection;
+    glm::vec3 position{};
+    glm::vec3 target{};
+    glm::vec3 upDirection{};
 };
