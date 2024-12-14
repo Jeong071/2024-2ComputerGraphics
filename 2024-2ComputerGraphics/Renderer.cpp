@@ -25,8 +25,10 @@ float floorMoveSpeed = 1.1f;
 float floorPosZ = 0.0f;
 
 float wallMoveSpeed = 1.1f;
-float wallPosZ[5] = { -4.0f, -2.0f, 0.0f, -2.0f, -1.0f };
-
+float wallPosZ[5] = { -4.0f, -2.0f, 0.0f, 4.0f, 3.0f };
+float maxZ[5] = { 5.0f, 3.0f, 2.0f, 6.0f, 7.0f };
+float minZ[5] = { -5.0f, -4.0f, -7.0f, -2.0f, -1.0f };
+float direct[5] = { -1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
 //미사일 변수
 float missileY = 5.0f;
 float missileSpeed = 2.1f;
@@ -974,6 +976,7 @@ void Renderer::ProcessCollision()
 {
 	bool collided = false;
 	gPlayer.SetIsOnMovingFloor(false);
+	gPlayer.SetIsDeath(false);
 	for (Cube& b : cubes) {
 	if (CheckCollision(b)) {
 			collided = true;
@@ -987,14 +990,14 @@ void Renderer::ProcessCollision()
 			}
 		}
 	if (!gPlayer.GetIsJumping()) {
-		//gPlayer.SetIsFalling(!collided);
+		gPlayer.SetIsFalling(!collided);
 	}
 
 	
 
 	for (Cube & o : obtacleCubes) {
 		if (CheckCollision(o)) {
-			//gPlayer.SetIsDeath(true);
+			gPlayer.SetIsDeath(true);
 		}
 	}
 	
@@ -1268,6 +1271,7 @@ GLvoid Renderer::RenderObstacle() {
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
 
 	Cube stage3_movingWall1;
+	SetWallZ(0);
 	stage3_movingWall1.position = glm::vec3(0.0f, 0.7f, -19.5f + wallPosZ[0]);
 	stage3_movingWall1.scale = glm::vec3(0.5f, 1.2f, 0.2f);
 	stage3_movingWall1.rotationAngle = 0.0f;
@@ -1276,10 +1280,12 @@ GLvoid Renderer::RenderObstacle() {
 	stage3_movingWall1.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(stage3_movingWall1.modelMatrix));
 	stage3_movingWall1.draw(36, 0);
+	stage3_movingWall1.PrintCubeAABB();
 	obtacleCubes.emplace_back(stage3_movingWall1);
 	stage3_movingWall1.DeleteBuffer();
 
 	Cube stage3_movingWall2;
+	SetWallZ(1);
 	stage3_movingWall2.position = glm::vec3(0.7f, 0.7f, -17.5f + wallPosZ[1]);
 	stage3_movingWall2.scale = glm::vec3(0.5f, 1.2f, 0.2f);
 	stage3_movingWall2.rotationAngle = 0.0f;
@@ -1292,6 +1298,7 @@ GLvoid Renderer::RenderObstacle() {
 	stage3_movingWall2.DeleteBuffer();
 
 	Cube stage3_movingWall3;
+	SetWallZ(2);
 	stage3_movingWall3.position = glm::vec3(1.4f, 0.7f, -15.5f + wallPosZ[2]);
 	stage3_movingWall3.scale = glm::vec3(0.5f, 1.2f, 0.2f);
 	stage3_movingWall3.rotationAngle = 0.0f;
@@ -1304,6 +1311,7 @@ GLvoid Renderer::RenderObstacle() {
 	stage3_movingWall3.DeleteBuffer();
 
 	Cube stage3_movingWall4;
+	SetWallZ(3);
 	stage3_movingWall4.position = glm::vec3(-0.7f, 0.7f, -21.5f + wallPosZ[3]);
 	stage3_movingWall4.scale = glm::vec3(0.5f, 1.2f, 0.2f);
 	stage3_movingWall4.rotationAngle = 0.0f;
@@ -1316,6 +1324,7 @@ GLvoid Renderer::RenderObstacle() {
 	stage3_movingWall4.DeleteBuffer();
 
 	Cube stage3_movingWall5;
+	SetWallZ(4);
 	stage3_movingWall5.position = glm::vec3(-1.4f, 0.7f, -23.5f + wallPosZ[4]);
 	stage3_movingWall5.scale = glm::vec3(0.5f, 1.2f, 0.2f);
 	stage3_movingWall5.rotationAngle = 0.0f;
@@ -1347,22 +1356,8 @@ GLvoid Renderer::update() {
 		floorPosZ = -1.5f;
 		floorMoveSpeed *= -1;
 	}
-	float maxZ[5] = { 5.0f, 3.0f, 1.0f, 2.0f, 4.0f };
-	float minZ[5] = { -5.0f, -3.0f, -3.0f, -5.0f, -4.0f };
-	for (int i = 0; i < 5; ++i) {
-		wallPosZ[i] += 2 * wallMoveSpeed * deltaTime;  // 두 번 업데이트하는 것을 한 줄로 간소화
-
-		// 경계값 체크 및 wallMoveSpeed 반전
-		if (wallPosZ[i] > maxZ[i] || wallPosZ[i] < minZ[i]) {
-			if (wallPosZ[i] > maxZ[i]) {
-				wallPosZ[i] = maxZ[i];
-			}
-			else if (wallPosZ[i] < minZ[i]) {
-				wallPosZ[i] = minZ[i];
-			}
-			wallMoveSpeed *= -1;
-		}
-	}
+	
+	
 	for (int i = 0; i < missileYs.size(); i++) {
 		missileYs[i] -= missileSpeed * deltaTime;  // 각 미사일의 위치 갱신
 		if (missileYs[i] < 0.3f) {  // 범위 아래로 내려가면 새 위치 설정
@@ -1381,6 +1376,24 @@ GLvoid Renderer::update() {
 	}
 
 
+}
+
+void Renderer::SetWallZ(int x)
+{
+	
+		wallPosZ[x] +=  direct[x] * 1.0f/60;  // 두 번 업데이트하는 것을 한 줄로 간소화
+
+		// 경계값 체크 및 wallMoveSpeed 반전
+		if (wallPosZ[x] > maxZ[x] || wallPosZ[x] < minZ[x]) {
+			if (wallPosZ[x] > maxZ[x]) {
+				wallPosZ[x] = maxZ[x];
+			}
+			else if (wallPosZ[x] < minZ[x]) {
+				wallPosZ[x] = minZ[x];
+			}
+			direct[x] *= -1;
+		}
+	
 }
 
 

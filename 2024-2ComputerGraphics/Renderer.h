@@ -21,7 +21,7 @@ public:
 	static void RenderMissile(float startX, float startY, float startz);
 	static void RenderObstacle();
 	static void update();
-	
+	static void SetWallZ(int x);
 
 
 
