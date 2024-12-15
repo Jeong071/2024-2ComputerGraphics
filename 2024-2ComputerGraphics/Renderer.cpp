@@ -1392,17 +1392,36 @@ GLvoid Renderer::update() {
 			missileYs[i] = dist(rng);
 		}
 
-		enemyArmRotationAngle += enemyArmRotationRate * deltaTime;
-		if (enemyArmRotationAngle > 30.0f) {
-			enemyArmRotationAngle = 30.0f;
-			enemyArmRotationRate = -enemyArmRotationRate;
-		}
-		else if (enemyArmRotationAngle < -30.0f) {
-			enemyArmRotationAngle = -30.0f;
-			enemyArmRotationRate = -enemyArmRotationRate;
+		// x, z 위치 계산
+		int xPositionIndex = i % 3; // 3개의 x축 위치 중 하나 선택
+		float xPosition = xPositionIndex == 0 ? -2 : xPositionIndex == 1 ? 0 : 2; // x축 위치 설정
+		float zPosition = -28.5 + (i / 3 * -4); // z축 위치 설정
+		if (i % 3 == 1) {
+			zPosition = -28.5 + (i / 3 * -4) - 2;
 		}
 
+		RenderMissile(xPosition, missileYs[i], zPosition);
+	}
 
+	//몬스터 이동
+	enemyLegRotationAngle += enemyLegRotationRate * deltaTime;
+	if (enemyLegRotationAngle > 30.0f) {
+		enemyLegRotationAngle = 30.0f;
+		enemyLegRotationRate = -enemyLegRotationRate;
+	}
+	else if (enemyLegRotationAngle < -30.0f) {
+		enemyLegRotationAngle = -30.0f;
+		enemyLegRotationRate = -enemyLegRotationRate;
+	}
+
+	enemyArmRotationAngle += enemyArmRotationRate * deltaTime;
+	if (enemyArmRotationAngle > 30.0f) {
+		enemyArmRotationAngle = 30.0f;
+		enemyArmRotationRate = -enemyArmRotationRate;
+	}
+	else if (enemyArmRotationAngle < -30.0f) {
+		enemyArmRotationAngle = -30.0f;
+		enemyArmRotationRate = -enemyArmRotationRate;
 	}
 }
 
