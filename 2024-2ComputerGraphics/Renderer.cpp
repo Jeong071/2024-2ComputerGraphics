@@ -19,6 +19,19 @@ std::vector<Cube> Renderer::objCubes{};
 std::vector<Cube> Renderer::movingFloor{};
 std::vector<Cube> Renderer::obtacleCubes{};
 std::vector<Cube> Renderer::missiles{};
+//몬스터 이동
+bool isEnemyMoving = true;
+float enemyArmRotationAngle = 0.0f;
+float enemyLegRotationAngle = 0.0f;
+float enemyArmRotationRate = 90.0f;
+float enemyLegRotationRate = 90.0f;
+
+//적 이동,회전
+glm::vec3 enemyPos = glm::vec3(3.5f, 0.5f, -9.0f);
+glm::vec3 enemy2Pos = glm::vec3(-3.5f, 0.5f, -9.0f);
+float enemy1RotationAngle = 30.0f;
+float enemy2RotationAngle = 0.0f;
+
 //지형 애니메이션 변수
 float lastTime = 0.0f;
 float floorMoveSpeed = 1.1f;
@@ -134,11 +147,11 @@ void Renderer::CreateShader()
 	shaderProgramID = sh.CreateShaderProgram(vertexShader, fragmentShader);
 }
 
-GLvoid Renderer::RenderEnemy() { 
+GLvoid Renderer::RenderEnemy(glm::vec3 enemyPos, float angle) {
 	Cube enemyBody;
-	enemyBody.position = glm::vec3(0.0f, 0.7f, 4.0f);
-	enemyBody.scale = glm::vec3(0.4f, 0.2f, 0.2f);
-	enemyBody.rotationAngle = 0.0f;
+	enemyBody.position = glm::vec3(enemyPos.x, enemyPos.y, enemyPos.z);
+	enemyBody.scale = glm::vec3(0.4f * 3 / 4 , 0.2f * 3 / 4, 0.2f * 3 / 4);
+	enemyBody.rotationAngle = angle;
 	enemyBody.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	enemyBody.updateModelMatrix();
 	enemyBody.updateBounds();
@@ -149,10 +162,21 @@ GLvoid Renderer::RenderEnemy() {
 	enemyBody.draw(36, 0);
 	enemyBody.DeleteBuffer();
 
+	//충돌판정용 큐브
+	Cube enemy;
+	enemy.position = glm::vec3(enemyPos.x, enemyPos.y, enemyPos.z);
+	enemy.scale = glm::vec3(0.5f * 3 / 4, 1.2f * 3 / 4, 0.4f * 3 / 4);
+	enemy.rotationAngle = angle;
+	enemy.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	enemy.updateModelMatrix();
+	enemy.updateBounds();
+	enemy.DeleteBuffer();
+	deathCubes.emplace_back(enemy);
+
 	Cube enemyHead;
-	enemyHead.position = glm::vec3(enemyBody.position.x + 0.0f, enemyBody.position.y + 0.185, enemyBody.position.z - 0.05f);
-	enemyHead.scale = glm::vec3(0.15f, 0.17f, 0.15f);
-	enemyHead.rotationAngle = 0.0f;
+	enemyHead.position = glm::vec3(enemyBody.position.x + 0.0f, enemyBody.position.y + 0.135, enemyBody.position.z - 0.05f);
+	enemyHead.scale = glm::vec3(0.15f * 3 / 4, 0.17f * 3 / 4, 0.15f * 3 / 4);
+	enemyHead.rotationAngle = angle;
 	enemyHead.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	enemyHead.updateModelMatrix();
 	enemyHead.updateBounds();
@@ -160,15 +184,13 @@ GLvoid Renderer::RenderEnemy() {
 	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[2]);
 	enemyBody.draw(6, 0);
 	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[3]);
-	for (int i = 1; i < 6; ++i) {
-		enemyBody.draw(6, (void*)(i * 6 * sizeof(GLuint)));
-	}
+	enemyBody.draw(36, 0);
 	enemyHead.DeleteBuffer();
 
 	Cube enemyNose;
-	enemyNose.position = glm::vec3(enemyBody.position.x + 0.0f, enemyBody.position.y + 0.11, enemyBody.position.z - 0.14f);
-	enemyNose.scale = glm::vec3(0.04f, 0.06f, 0.04f);
-	enemyNose.rotationAngle = 0.0f;
+	enemyNose.position = glm::vec3(enemyBody.position.x + 0.0f, enemyBody.position.y + 0.08, enemyBody.position.z - 0.12f);
+	enemyNose.scale = glm::vec3(0.04f * 3 / 4, 0.06f * 3 / 4, 0.04f * 3 / 4);
+	enemyNose.rotationAngle = angle;
 	enemyNose.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	enemyNose.updateModelMatrix();
 	enemyNose.updateBounds();
@@ -178,33 +200,35 @@ GLvoid Renderer::RenderEnemy() {
 	enemyNose.DeleteBuffer();
 
 	Cube enemyLeftArm;
-	enemyLeftArm.position = glm::vec3(enemyBody.position.x + 0.24f, enemyBody.position.y - 0.13, enemyBody.position.z);
-	enemyLeftArm.scale = glm::vec3(0.08f, 0.48f, 0.12f);
-	enemyLeftArm.rotationAngle = 0.0f;
-	enemyLeftArm.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	enemyLeftArm.updateModelMatrix();
-	enemyLeftArm.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(enemyLeftArm.modelMatrix));
-	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[5]);
+	glm::mat4 leftArmModelMatrix = glm::mat4(1.0f);
+	leftArmModelMatrix = glm::translate(leftArmModelMatrix, enemyBody.position);
+	leftArmModelMatrix = glm::rotate(leftArmModelMatrix, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+	leftArmModelMatrix = glm::translate(leftArmModelMatrix, glm::vec3(0.18f, 0.1f, 0.0f));
+	leftArmModelMatrix = glm::rotate(leftArmModelMatrix, glm::radians(enemyArmRotationAngle), glm::vec3(-1.0f, 0.0f, 0.0f));
+	leftArmModelMatrix = glm::translate(leftArmModelMatrix, glm::vec3(0.0f, - 0.23f, 0.0f));
+	leftArmModelMatrix = glm::scale(leftArmModelMatrix, glm::vec3(0.08f * 3 / 4, 0.48f * 3 / 4, 0.12f * 3 / 4));
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(leftArmModelMatrix));
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[7]);
 	enemyLeftArm.draw(36, 0);
 	enemyLeftArm.DeleteBuffer();
 
 	Cube enemyRightArm;
-	enemyRightArm.position = glm::vec3(enemyBody.position.x - 0.24f, enemyBody.position.y - 0.13, enemyBody.position.z);
-	enemyRightArm.scale = glm::vec3(0.08f, 0.48f, 0.12f);
-	enemyRightArm.rotationAngle = 0.0f;
-	enemyRightArm.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	enemyRightArm.updateModelMatrix();
-	enemyRightArm.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(enemyRightArm.modelMatrix));
-	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[5]);
+	glm::mat4 rightArmModelMatrix = glm::mat4(1.0f);
+	rightArmModelMatrix = glm::translate(rightArmModelMatrix, enemyBody.position);
+	rightArmModelMatrix = glm::rotate(rightArmModelMatrix, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+	rightArmModelMatrix = glm::translate(rightArmModelMatrix, glm::vec3(-0.18f, 0.1f, 0.0f));
+	rightArmModelMatrix = glm::rotate(rightArmModelMatrix, glm::radians(enemyArmRotationAngle), glm::vec3(1.0f, 0.0f, 0.0f));
+	rightArmModelMatrix = glm::translate(rightArmModelMatrix, glm::vec3(0.0f, -0.23f, 0.0f));
+	rightArmModelMatrix = glm::scale(rightArmModelMatrix, glm::vec3(0.08f * 3 / 4, 0.48f * 3 / 4, 0.12f * 3 / 4));
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(rightArmModelMatrix));
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[7]);
 	enemyLeftArm.draw(36, 0);
-	enemyRightArm.DeleteBuffer();
+	enemyLeftArm.DeleteBuffer();
 
 	Cube enemyUnderBody;
-	enemyUnderBody.position = glm::vec3(enemyBody.position.x, enemyBody.position.y - 0.13, enemyBody.position.z);
-	enemyUnderBody.scale = glm::vec3(0.2f, 0.1f, 0.1f);
-	enemyUnderBody.rotationAngle = 0.0f;
+	enemyUnderBody.position = glm::vec3(enemyBody.position.x, enemyBody.position.y - 0.11, enemyBody.position.z);
+	enemyUnderBody.scale = glm::vec3(0.2f * 3 / 4, 0.1f * 3 / 4, 0.1f * 3 / 4);
+	enemyUnderBody.rotationAngle = angle;
 	enemyUnderBody.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	enemyUnderBody.updateModelMatrix();
 	enemyUnderBody.updateBounds();
@@ -214,28 +238,29 @@ GLvoid Renderer::RenderEnemy() {
 	enemyUnderBody.DeleteBuffer();
 
 	Cube enemyLeftLeg;
-	enemyLeftLeg.position = glm::vec3(enemyBody.position.x + 0.08f, enemyBody.position.y - 0.35f, enemyBody.position.z);
-	enemyLeftLeg.scale = glm::vec3(0.12f, 0.34f, 0.12f);
-	enemyLeftLeg.rotationAngle = 0.0f;
-	enemyLeftLeg.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	enemyLeftLeg.updateModelMatrix();
-	enemyLeftLeg.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(enemyLeftLeg.modelMatrix));
+	glm::mat4 leftLegModelMatrix = glm::mat4(1.0f);
+	leftLegModelMatrix = glm::translate(leftLegModelMatrix, enemyUnderBody.position);
+	leftLegModelMatrix = glm::rotate(leftLegModelMatrix, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+	leftLegModelMatrix = glm::rotate(leftLegModelMatrix, glm::radians(enemyLegRotationAngle), glm::vec3(1.0f, 0.0f, 0.0f));
+	leftLegModelMatrix = glm::translate(leftLegModelMatrix, glm::vec3(0.08f, -0.16f, 0.0f));
+	leftLegModelMatrix = glm::scale(leftLegModelMatrix, glm::vec3(0.12f * 3 / 4, 0.34f * 3 / 4, 0.12f * 3 / 4));
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(leftLegModelMatrix));
 	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[7]);
 	enemyLeftArm.draw(36, 0);
 	enemyLeftLeg.DeleteBuffer();
 
 	Cube enemyRightLeg;
-	enemyRightLeg.position = glm::vec3(enemyBody.position.x - 0.08f, enemyBody.position.y - 0.35f, enemyBody.position.z);
-	enemyRightLeg.scale = glm::vec3(0.12f, 0.34f, 0.12f);
-	enemyRightLeg.rotationAngle = 0.0f;
-	enemyRightLeg.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	enemyRightLeg.updateModelMatrix();
-	enemyRightLeg.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(enemyRightLeg.modelMatrix));
+	glm::mat4 rightLegModelMatrix = glm::mat4(1.0f);
+	rightLegModelMatrix = glm::translate(rightLegModelMatrix, enemyUnderBody.position);
+	rightLegModelMatrix = glm::rotate(rightLegModelMatrix, glm::radians(angle), glm::vec3(0.0f, 1.0f, 0.0f));
+	rightLegModelMatrix = glm::rotate(rightLegModelMatrix, glm::radians(enemyLegRotationAngle), glm::vec3(-1.0f, 0.0f, 0.0f));
+	rightLegModelMatrix = glm::translate(rightLegModelMatrix, glm::vec3(-0.08f, -0.16f, 0.0f));
+	rightLegModelMatrix = glm::scale(rightLegModelMatrix, glm::vec3(0.12f * 3 / 4, 0.34f * 3 / 4, 0.12f * 3 / 4));
+
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(rightLegModelMatrix));
 	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[7]);
 	enemyLeftArm.draw(36, 0);
-	enemyRightLeg.DeleteBuffer();
+	enemyLeftLeg.DeleteBuffer();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 0);
@@ -1136,7 +1161,8 @@ GLvoid Renderer::RenderPlayScene()
 	gModel.RenderPlayer();
 	gModel.ReleaseBuffer();
 	//�� ����
-	RenderEnemy();
+	RenderEnemy(enemyPos, enemy1RotationAngle);
+	RenderEnemy(enemy2Pos, enemy2RotationAngle);
 
 	//�������� ����
 	RenderStage1();
@@ -1367,15 +1393,14 @@ GLvoid Renderer::update() {
 			missileYs[i] = dist(rng);
 		}
 
-		// x, z 위치 계산
-		int xPositionIndex = i % 3; // 3개의 x축 위치 중 하나 선택
-		float xPosition = xPositionIndex == 0 ? -2 : xPositionIndex == 1 ? 0 : 2; // x축 위치 설정
-		float zPosition = -28.5 + (i / 3 * -4); // z축 위치 설정
-		if (i % 3 == 1) {
-			zPosition = -28.5 + (i / 3 * -4) - 2;
-		}
-
-		RenderMissile(xPosition, missileYs[i], zPosition);
+	enemyArmRotationAngle += enemyArmRotationRate * deltaTime;
+	if (enemyArmRotationAngle > 30.0f) {
+		enemyArmRotationAngle = 30.0f;
+		enemyArmRotationRate = -enemyArmRotationRate;
+	}
+	else if (enemyArmRotationAngle < -30.0f) {
+		enemyArmRotationAngle = -30.0f;
+		enemyArmRotationRate = -enemyArmRotationRate;
 	}
 
 
