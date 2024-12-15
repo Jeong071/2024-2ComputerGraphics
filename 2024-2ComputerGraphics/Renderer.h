@@ -11,7 +11,7 @@ public:
 	static void RenderScene();
 	static void CreateShader();
 
-	static void RenderEnemy();
+	static void RenderEnemy(glm::vec3 enemyPos, float angle);
 	static void RenderStage1();
 	static void RenderStage2();
 
@@ -40,6 +40,7 @@ private:
 	static std::vector<Cube> movingFloor;
 	static std::vector<Cube> objCubes;
 	static std::vector<Cube> obtacleCubes;
+	static std::vector<Cube> enemyCubes;
 	static std::vector<Cube> missiles;
 
 	static GLuint shaderProgramID;

@@ -55,8 +55,12 @@ extern float rotateYAxis;
 
 enum SceneType {
     MAIN_MENU,
-    GAME_PLAY,
-    
+    GAME_PLAY, 
+};
+
+enum EnemyState {
+    IDLE,
+    CHASE,
 };
 
 extern SceneType currentScene;
