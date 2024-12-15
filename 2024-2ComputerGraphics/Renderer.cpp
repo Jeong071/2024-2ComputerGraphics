@@ -18,6 +18,7 @@ std::vector<Cube> Renderer::cubes{};
 std::vector<Cube> Renderer::objCubes{};
 std::vector<Cube> Renderer::movingFloor{};
 std::vector<Cube> Renderer::obtacleCubes{};
+std::vector<Cube> Renderer::enemyCubes{};
 std::vector<Cube> Renderer::missiles{};
 //몬스터 이동
 bool isEnemyMoving = true;
@@ -171,6 +172,7 @@ GLvoid Renderer::RenderEnemy(glm::vec3 enemyPos, float angle) {
 	enemy.updateModelMatrix();
 	enemy.updateBounds();
 	enemy.DeleteBuffer();
+	enemyCubes.emplace_back(enemy);
 
 	Cube enemyHead;
 	enemyHead.position = glm::vec3(enemyBody.position.x + 0.0f, enemyBody.position.y + 0.135, enemyBody.position.z - 0.05f);
@@ -1025,6 +1027,12 @@ void Renderer::ProcessCollision()
 		}
 	}
 	
+	for (Cube& o : enemyCubes) {
+		if (CheckCollision(o)) {
+			gPlayer.SetIsDeath(true);
+		}
+	}
+
 }
 
 bool Renderer::CheckCollision(Cube& b)

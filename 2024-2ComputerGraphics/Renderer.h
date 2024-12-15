@@ -40,6 +40,7 @@ private:
 	static std::vector<Cube> movingFloor;
 	static std::vector<Cube> objCubes;
 	static std::vector<Cube> obtacleCubes;
+	static std::vector<Cube> enemyCubes;
 	static std::vector<Cube> missiles;
 
 	static GLuint shaderProgramID;
