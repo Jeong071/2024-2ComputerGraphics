@@ -11,7 +11,7 @@ public:
 	static void RenderScene();
 	static void CreateShader();
 
-	static void RenderEnemy(glm::vec3 enemyPos);
+	static void RenderEnemy(glm::vec3 enemyPos, float angle);
 	static void RenderStage1();
 	static void RenderStage2();
 
