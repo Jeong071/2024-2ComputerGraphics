@@ -604,6 +604,8 @@ GLvoid Renderer::RenderStage3() {
 	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
 
+	movingFloor.clear();
+
 	Cube cube15;
 	cube15.position = glm::vec3(0.0f, 0.0f, -19.5f);
 	cube15.scale = glm::vec3(0.5f, 0.2f, 13.0f);
