@@ -150,7 +150,6 @@ void Renderer::CreateShader()
 }
 
 GLvoid Renderer::RenderEnemy(glm::vec3 enemyPos, float angle) {
-	enemyCubes.clear();
 
 	Cube enemyBody;
 	enemyBody.position = glm::vec3(enemyPos.x, enemyPos.y, enemyPos.z);
@@ -169,7 +168,7 @@ GLvoid Renderer::RenderEnemy(glm::vec3 enemyPos, float angle) {
 	//충돌판정용 큐브
 	Cube enemy;
 	enemy.position = glm::vec3(enemyPos.x, enemyPos.y, enemyPos.z);
-	enemy.scale = glm::vec3(0.5f * 3 / 4, 1.2f * 3 / 4, 0.4f * 3 / 4);
+	enemy.scale = glm::vec3(0.5f * 3 / 4, 1.2f * 3 / 4, 0.25f * 3 / 4);
 	enemy.rotationAngle = angle;
 	enemy.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	enemy.updateModelMatrix();
@@ -1189,7 +1188,7 @@ GLvoid Renderer::RenderPlayScene()
 	ProcessCollision();
 	update();
 
-
+	enemyCubes.clear();
 
 	glm::mat4 viewNoRotation = gCamera.getViewMatrix();
 	projection = gCamera.getProjectionMatrix(WIDTH, HEIGHT);
@@ -1446,8 +1445,12 @@ GLvoid Renderer::update() {
 	if (currentState == CHASE) {
 		glm::vec3 playerPos = glm::vec3(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
 		glm::vec3 direction = playerPos - enemyPos;
+		glm::vec3 direction2 = playerPos - enemy2Pos;
 		direction.y = 0;
+		direction2.y = 0;
+
 		float distance = glm::length(direction);
+		float distance2 = glm::length(direction2);
 
 		if (distance > 0) {
 			direction = glm::normalize(direction);
@@ -1455,6 +1458,15 @@ GLvoid Renderer::update() {
 
 			float angle = -atan2(direction.z, direction.x);
 			enemy1RotationAngle = glm::degrees(angle) - 90.0f;
+
+		}
+
+		if (distance2 > 0) {
+			direction2 = glm::normalize(direction2);
+			enemy2Pos += direction2 * deltaTime * 0.5f;
+
+			float angle2 = -atan2(direction2.z, direction2.x);
+			enemy2RotationAngle = glm::degrees(angle2) - 90.0f;
 
 		}
 	}
