@@ -630,7 +630,7 @@ GLvoid Renderer::RenderStage3() {
 	cube26.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	cube26.updateModelMatrix();
 	cube26.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube23.modelMatrix));
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube26.modelMatrix));
 	cube26.draw(36, 0);
 	cube26.DeleteBuffer();
 	cubes.emplace_back(cube26);
