@@ -171,7 +171,6 @@ GLvoid Renderer::RenderEnemy(glm::vec3 enemyPos, float angle) {
 	enemy.updateModelMatrix();
 	enemy.updateBounds();
 	enemy.DeleteBuffer();
-	deathCubes.emplace_back(enemy);
 
 	Cube enemyHead;
 	enemyHead.position = glm::vec3(enemyBody.position.x + 0.0f, enemyBody.position.y + 0.135, enemyBody.position.z - 0.05f);
