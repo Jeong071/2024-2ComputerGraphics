@@ -65,7 +65,7 @@ enum EnemyState {
 
 extern SceneType currentScene;
 
-#define PLAYER_SPEED	0.025
+#define PLAYER_SPEED	0.025 //0.025
 #define WIDTH			1280
 #define HEIGHT			960
 #define SENSITIVITY		0.15

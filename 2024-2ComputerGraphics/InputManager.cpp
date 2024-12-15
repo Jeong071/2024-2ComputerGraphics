@@ -266,6 +266,10 @@ GLvoid InputManager::Timer(int value)
 
         }
 
+        if (IsKeyPressed('p')) {
+            gPlayer.PrintPlayerPos();
+        }
+
         if (IsKeyPressed(' ') && !gPlayer.GetIsJumping() && !gPlayer.GetIsFalling()) {
 
             gPlayer.SetIsJumping(true);
