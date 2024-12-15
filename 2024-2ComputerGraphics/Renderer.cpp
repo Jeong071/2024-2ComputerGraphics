@@ -121,7 +121,7 @@ void Renderer::InitializeTextures() {
 		"floor_texture.jpg", "enemy_body.png", "enemy_head_face.png",
 		"enemy_head.png", "enemy_nose.png", "enemy_arm.png", "enemy_underBody.png",
 		"enemy_leg.png","front.jpg","back.jpg","left.jpg","right.jpg","bottom.jpg","top.jpg","Main.png",
-	 "missile_target.png" , "lava.png","bomb.png"
+	 "missile_target.png" , "lava.png","wall.png"
 	};
 	textureIDs = loadTextures(textureFiles);
 }
@@ -242,22 +242,98 @@ GLvoid Renderer::RenderEnemy() {
 }
 
 GLvoid Renderer::RenderStage1() {
-	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[0]);
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[17]);
 	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
 
 
-	Cube temp;
-	temp.position = glm::vec3(0.0f, 0.0f, 6.0f);
-	temp.scale = glm::vec3(0.2f, 1.0f, 0.2f);
-	temp.rotationAngle = 0.0f;
-	temp.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
-	temp.updateModelMatrix();
-	temp.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(temp.modelMatrix));
-	temp.draw(36, 0);
-	temp.DeleteBuffer();
-	objCubes.emplace_back(temp);
+	Cube obj1;
+	obj1.position = glm::vec3(0.0f, 0.5f, 6.0f);
+	obj1.scale = glm::vec3(0.2f, 1.0f, 0.2f);
+	obj1.rotationAngle = 0.0f;
+	obj1.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	obj1.updateModelMatrix();
+	obj1.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(obj1.modelMatrix));
+	obj1.draw(36, 0);
+	obj1.DeleteBuffer();
+	objCubes.emplace_back(obj1);
+
+	Cube obj2;
+	obj2.position = glm::vec3(1.2f, 0.5f, 5.7f);
+	obj2.scale = glm::vec3(0.2f, 1.0f, 0.25f);
+	obj2.rotationAngle = 0.0f;
+	obj2.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	obj2.updateModelMatrix();
+	obj2.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(obj2.modelMatrix));
+	obj2.draw(36, 0);
+	obj2.DeleteBuffer();
+	objCubes.emplace_back(obj2);
+
+	Cube obj3;
+	obj3.position = glm::vec3(1.7f, 0.5f, 5.0f);
+	obj3.scale = glm::vec3(0.35f, 1.0f, 0.2f);
+	obj3.rotationAngle = 0.0f;
+	obj3.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	obj3.updateModelMatrix();
+	obj3.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(obj3.modelMatrix));
+	obj3.draw(36, 0);
+	obj3.DeleteBuffer();
+	objCubes.emplace_back(obj3);
+
+	Cube obj4;
+	obj4.position = glm::vec3(1.83f, 0.5f, 4.0f);
+	obj4.scale = glm::vec3(0.35f, 1.0f, 0.2f);
+	obj4.rotationAngle = 0.0f;
+	obj4.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	obj4.updateModelMatrix();
+	obj4.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(obj4.modelMatrix));
+	obj4.draw(36, 0);
+	obj4.DeleteBuffer();
+	objCubes.emplace_back(obj4);
+
+	Cube obj5;
+	obj5.position = glm::vec3(1.15f, 0.5f, 3.2f);
+	obj5.scale = glm::vec3(0.2f, 1.0f, 0.35f);
+	obj5.rotationAngle = 0.0f;
+	obj5.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	obj5.updateModelMatrix();
+	obj5.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(obj5.modelMatrix));
+	obj5.draw(36, 0);
+	obj5.DeleteBuffer();
+	objCubes.emplace_back(obj5);
+
+	Cube obj6;
+	obj6.position = glm::vec3(0.05f, 0.5f, 3.25f);
+	obj6.scale = glm::vec3(0.2f, 1.0f, 0.2f);
+	obj6.rotationAngle = 0.0f;
+	obj6.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	obj6.updateModelMatrix();
+	obj6.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(obj6.modelMatrix));
+	obj6.draw(36, 0);
+	obj6.DeleteBuffer();
+	objCubes.emplace_back(obj6);
+
+	Cube obj7;
+	obj7.position = glm::vec3(-1.75f, 0.5f, 2.39f);
+	obj7.scale = glm::vec3(0.2f, 1.0f, 0.2f);
+	obj7.rotationAngle = 0.0f;
+	obj7.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	obj7.updateModelMatrix();
+	obj7.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(obj7.modelMatrix));
+	obj7.draw(36, 0);
+	obj7.DeleteBuffer();
+	objCubes.emplace_back(obj7);
+
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[0]);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
 
 	Cube cube1;
 	cube1.position = glm::vec3(0.0f, 0.0f, 8.0f);
@@ -346,15 +422,51 @@ GLvoid Renderer::RenderStage1() {
 	
 	Cube cube8;
 	cube8.position = glm::vec3(cube7.position.x + 1.0f, cube7.position.y + 0.0f, cube7.position.z - 2.75f);
-	cube8.scale = glm::vec3(0.5f, 0.2f, 6.0f);
+	cube8.scale = glm::vec3(0.5f, 0.2f, 3.0f);
 	cube8.rotationAngle = 0.0f;
 	cube8.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	cube8.updateModelMatrix();
 	cube8.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube8.modelMatrix));
-	cube8.draw(36, 0);
+	//cube8.draw(36, 0);
 	cube8.DeleteBuffer();
-	cubes.emplace_back(cube8);
+	//cubes.emplace_back(cube8);
+
+	Cube cubeC;
+	cubeC.position = glm::vec3(cube7.position.x + 1.0f, cube7.position.y + 0.0f, cube7.position.z - 3.25f);
+	cubeC.scale = glm::vec3(0.5f, 0.2f, 0.8f);
+	cubeC.rotationAngle = 0.0f;
+	cubeC.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	cubeC.updateModelMatrix();
+	cubeC.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cubeC.modelMatrix));
+	cubeC.draw(36, 0);
+	cubeC.DeleteBuffer();
+	cubes.emplace_back(cubeC);
+
+	Cube cubeD;
+	cubeD.position = glm::vec3(cube7.position.x + 1.0f, cube7.position.y + 0.0f, cube7.position.z -2.0f);
+	cubeD.scale = glm::vec3(0.5f, 0.2f, 1.0f);
+	cubeD.rotationAngle = 0.0f;
+	cubeD.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	cubeD.updateModelMatrix();
+	cubeD.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cubeD.modelMatrix));
+	cubeD.draw(36, 0);
+	cubeD.DeleteBuffer();
+	cubes.emplace_back(cubeD);
+
+	Cube cubeE;
+	cubeE.position = glm::vec3(cube7.position.x + 1.0f, cube7.position.y + 0.0f, cube7.position.z - 5.25f);
+	cubeE.scale = glm::vec3(0.5f, 0.2f, 1.2f);
+	cubeE.rotationAngle = 0.0f;
+	cubeE.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
+	cubeE.updateModelMatrix();
+	cubeE.updateBounds();
+	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cubeE.modelMatrix));
+	cubeE.draw(36, 0);
+	cubeE.DeleteBuffer();
+	cubes.emplace_back(cubeE);
 
 	Cube cube9;
 	cube9.position = glm::vec3(cube8.position.x + 1.75f, cube8.position.y + 0.0f, cube8.position.z);
@@ -400,7 +512,7 @@ GLvoid Renderer::RenderStage1() {
 	cube12.updateModelMatrix();
 	cube12.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube12.modelMatrix));
-	cube12.draw(36, 0);
+	//cube12.draw(36, 0);
 	cube12.DeleteBuffer();
 	cubes.emplace_back(cube12);
 	
@@ -855,7 +967,7 @@ GLvoid Renderer::RenderStage3() {
 	cube48.updateBounds();
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube48.modelMatrix));
 	cube48.draw(36, 0);
-	movingFloor.emplace_back(cube38);
+	movingFloor.emplace_back(cube48);
 	cube48.DeleteBuffer();
 
 	Cube cube49;
