@@ -8,6 +8,7 @@
 using namespace std;
 
 SceneType currentScene = MAIN_MENU;
+EnemyState currentState = IDLE;
 
 std::vector<GLuint> Renderer::textureIDs{};
 GLuint Renderer::shaderProgramID = 0;
@@ -459,6 +460,13 @@ GLvoid Renderer::RenderStage2() {
 	cube14.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	cube14.updateModelMatrix();
 	cube14.updateBounds();
+	if ((gPlayer.GetMaxPoint().x > cube14.GetCubeMinAABB().x && gPlayer.GetMinPoint().x < cube14.GetCubeMaxAABB().x) &&
+		(gPlayer.GetMaxPoint().z > cube14.GetCubeMinAABB().z && gPlayer.GetMinPoint().z < cube14.GetCubeMaxAABB().z)) {
+		currentState = CHASE;
+	}
+	else {
+		currentState = IDLE;
+	}
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube14.modelMatrix));
 	cube14.draw(36, 0);
 	cube14.DeleteBuffer();
@@ -1004,7 +1012,7 @@ void Renderer::ProcessCollision()
 {
 	bool collided = false;
 	gPlayer.SetIsOnMovingFloor(false);
-	//gPlayer.SetIsDeath(false);
+	
 	for (Cube& b : cubes) {
 	if (CheckCollision(b)) {
 			collided = true;
@@ -1029,8 +1037,8 @@ void Renderer::ProcessCollision()
 		}
 	}
 	
-	for (Cube& o : enemyCubes) {
-		if (CheckCollision(o)) {
+	for (Cube& e : enemyCubes) {
+		if (CheckCollision(e)) {
 			gPlayer.SetIsDeath(true);
 		}
 	}
@@ -1414,28 +1422,28 @@ GLvoid Renderer::update() {
 	}
 
 	//몬스터 팔다리 회전
-	enemyLegRotationAngle += enemyLegRotationRate * deltaTime;
-	if (enemyLegRotationAngle > 30.0f) {
-		enemyLegRotationAngle = 30.0f;
-		enemyLegRotationRate = -enemyLegRotationRate;
-	}
-	else if (enemyLegRotationAngle < -30.0f) {
-		enemyLegRotationAngle = -30.0f;
-		enemyLegRotationRate = -enemyLegRotationRate;
-	}
+	if (currentState == CHASE) {
+		enemyLegRotationAngle += enemyLegRotationRate * deltaTime;
+		if (enemyLegRotationAngle > 30.0f) {
+			enemyLegRotationAngle = 30.0f;
+			enemyLegRotationRate = -enemyLegRotationRate;
+		}
+		else if (enemyLegRotationAngle < -30.0f) {
+			enemyLegRotationAngle = -30.0f;
+			enemyLegRotationRate = -enemyLegRotationRate;
+		}
 
-	enemyArmRotationAngle += enemyArmRotationRate * deltaTime;
-	if (enemyArmRotationAngle > 30.0f) {
-		enemyArmRotationAngle = 30.0f;
-		enemyArmRotationRate = -enemyArmRotationRate;
+		enemyArmRotationAngle += enemyArmRotationRate * deltaTime;
+		if (enemyArmRotationAngle > 30.0f) {
+			enemyArmRotationAngle = 30.0f;
+			enemyArmRotationRate = -enemyArmRotationRate;
+		}
+		else if (enemyArmRotationAngle < -30.0f) {
+			enemyArmRotationAngle = -30.0f;
+			enemyArmRotationRate = -enemyArmRotationRate;
+		}
 	}
-	else if (enemyArmRotationAngle < -30.0f) {
-		enemyArmRotationAngle = -30.0f;
-		enemyArmRotationRate = -enemyArmRotationRate;
-	}
-	
-	//적 to 플레이어 추적 
-	if (gPlayer.GetStage() == 2) {
+	if (currentState == CHASE) {
 		glm::vec3 playerPos = glm::vec3(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
 		glm::vec3 direction = playerPos - enemyPos;
 		direction.y = 0;
@@ -1445,8 +1453,9 @@ GLvoid Renderer::update() {
 			direction = glm::normalize(direction);
 			enemyPos += direction * deltaTime * 0.5f;
 
-			float angle = atan2(direction.z, direction.x);
-			enemy1RotationAngle = glm::degrees(angle);
+			float angle = -atan2(direction.z, direction.x);
+			enemy1RotationAngle = glm::degrees(angle) - 90.0f;
+
 		}
 	}
 }
