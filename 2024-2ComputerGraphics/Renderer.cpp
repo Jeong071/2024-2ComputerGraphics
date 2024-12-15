@@ -29,8 +29,8 @@ float enemyArmRotationRate = 90.0f;
 float enemyLegRotationRate = 90.0f;
 
 //적 이동,회전
-glm::vec3 enemyPos = glm::vec3(3.5f, 0.5f, -9.0f);
-glm::vec3 enemy2Pos = glm::vec3(-3.5f, 0.5f, -9.0f);
+glm::vec3 enemyPos = glm::vec3(0.5f, 0.5f, -6.0f);
+glm::vec3 enemy2Pos = glm::vec3(-2.5f, 0.5f, -8.0f);
 float enemy1RotationAngle = 0.0f;
 float enemy2RotationAngle = 0.0f;
 
@@ -136,7 +136,7 @@ void Renderer::InitializeTextures() {
 		"floor_texture.jpg", "enemy_body.png", "enemy_head_face.png",
 		"enemy_head.png", "enemy_nose.png", "enemy_arm.png", "enemy_underBody.png",
 		"enemy_leg.png","front.jpg","back.jpg","left.jpg","right.jpg","bottom.jpg","top.jpg","Main.png",
-	 "missile_target.png" , "lava.png","bomb.png"
+	 "missile_target.png" , "lava.png"
 	};
 	textureIDs = loadTextures(textureFiles);
 }
@@ -464,6 +464,14 @@ GLvoid Renderer::RenderStage2() {
 		currentState = CHASE;
 	}
 	else {
+		enemyPos = glm::vec3(0.5f, 0.5f, -6.0f);
+		enemy2Pos = glm::vec3(-2.5f, 0.5f, -8.0f);
+		enemy1RotationAngle = 0.0f;
+		enemy2RotationAngle = 0.0f;
+		enemyArmRotationAngle = 0.0f;
+		enemyLegRotationAngle = 0.0f;
+		enemyArmRotationRate = 90.0f;
+		enemyLegRotationRate = 90.0f;
 		currentState = IDLE;
 	}
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube14.modelMatrix));
@@ -1454,7 +1462,7 @@ GLvoid Renderer::update() {
 
 		if (distance > 0) {
 			direction = glm::normalize(direction);
-			enemyPos += direction * deltaTime * 0.5f;
+			enemyPos += direction * deltaTime * 0.9f;
 
 			float angle = -atan2(direction.z, direction.x);
 			enemy1RotationAngle = glm::degrees(angle) - 90.0f;
@@ -1463,7 +1471,7 @@ GLvoid Renderer::update() {
 
 		if (distance2 > 0) {
 			direction2 = glm::normalize(direction2);
-			enemy2Pos += direction2 * deltaTime * 0.5f;
+			enemy2Pos += direction2 * deltaTime * 0.9f;
 
 			float angle2 = -atan2(direction2.z, direction2.x);
 			enemy2RotationAngle = glm::degrees(angle2) - 90.0f;
