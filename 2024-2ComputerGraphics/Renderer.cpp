@@ -1384,25 +1384,26 @@ GLvoid Renderer::update() {
 		floorPosZ = -1.5f;
 		floorMoveSpeed *= -1;
 	}
-	
-	
+
+
 	for (int i = 0; i < missileYs.size(); i++) {
 		missileYs[i] -= missileSpeed * deltaTime;  // 각 미사일의 위치 갱신
 		if (missileYs[i] < 0.3f) {  // 범위 아래로 내려가면 새 위치 설정
 			missileYs[i] = dist(rng);
 		}
 
-	enemyArmRotationAngle += enemyArmRotationRate * deltaTime;
-	if (enemyArmRotationAngle > 30.0f) {
-		enemyArmRotationAngle = 30.0f;
-		enemyArmRotationRate = -enemyArmRotationRate;
-	}
-	else if (enemyArmRotationAngle < -30.0f) {
-		enemyArmRotationAngle = -30.0f;
-		enemyArmRotationRate = -enemyArmRotationRate;
-	}
+		enemyArmRotationAngle += enemyArmRotationRate * deltaTime;
+		if (enemyArmRotationAngle > 30.0f) {
+			enemyArmRotationAngle = 30.0f;
+			enemyArmRotationRate = -enemyArmRotationRate;
+		}
+		else if (enemyArmRotationAngle < -30.0f) {
+			enemyArmRotationAngle = -30.0f;
+			enemyArmRotationRate = -enemyArmRotationRate;
+		}
 
 
+	}
 }
 
 void Renderer::SetWallZ(int x)
