@@ -164,9 +164,6 @@ GLvoid Renderer::RenderEnemy(glm::vec3 enemyPos) {
 	enemy.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
 	enemy.updateModelMatrix();
 	enemy.updateBounds();
-	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(enemy.modelMatrix));
-	enemy.draw(36, 0);
-
 	enemy.DeleteBuffer();
 	deathCubes.emplace_back(enemy);
 
