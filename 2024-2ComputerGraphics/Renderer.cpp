@@ -136,7 +136,7 @@ void Renderer::InitializeTextures() {
 		"floor_texture.jpg", "enemy_body.png", "enemy_head_face.png",
 		"enemy_head.png", "enemy_nose.png", "enemy_arm.png", "enemy_underBody.png",
 		"enemy_leg.png","front.jpg","back.jpg","left.jpg","right.jpg","bottom.jpg","top.jpg","Main.png",
-	 "missile_target.png" , "lava.png","wall.png"
+	 "missile_target.png" , "lava.png","wall.png","goalin.png"
 
 	};
 	textureIDs = loadTextures(textureFiles);
@@ -360,7 +360,7 @@ GLvoid Renderer::RenderStage1() {
 	obj7.DeleteBuffer();
 	objCubes.emplace_back(obj7);
 
-	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[0]);
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[18]);
 	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
 	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
 
@@ -376,6 +376,10 @@ GLvoid Renderer::RenderStage1() {
 	cube1.DeleteBuffer();
 	cubes.emplace_back(cube1);
 	
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[0]);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
+
 	Cube cube2;
 	cube2.position = glm::vec3(cube1.position.x + 0.0f, cube1.position.y + 0.0f, cube1.position.z-1.5f);
 	cube2.scale = glm::vec3(0.5f, 0.2f, 2.0f);
@@ -1038,6 +1042,9 @@ GLvoid Renderer::RenderStage3() {
 	movingFloor.emplace_back(cube50);
 	cube50.DeleteBuffer();
 
+	glBindTexture(GL_TEXTURE_2D, Renderer::textureIDs[18]);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "texture1"), 0);
+	glUniform1i(glGetUniformLocation(shaderProgramID, "useTexture"), 1);
 	//골인 지점
 	Cube cube51;
 	cube51.position = glm::vec3(0.0f, 0.0f, -51.5);

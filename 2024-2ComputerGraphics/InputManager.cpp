@@ -266,9 +266,7 @@ GLvoid InputManager::Timer(int value)
 
         }
 
-        if (IsKeyPressed('p')) {
-            gPlayer.PrintPlayerPos();
-        }
+       
 
         if (IsKeyPressed(' ') && !gPlayer.GetIsJumping() && !gPlayer.GetIsFalling()) {
 
@@ -296,6 +294,10 @@ GLvoid InputManager::Timer(int value)
         gPlayer.SetYaw(90.0f);
         playerAngle = 0.0f;
         currentScene = GAME_PLAY;
+    }
+
+    if (IsKeyPressed('q')) {
+        exit(1);
     }
 
     if (IsKeyPressed('v')) {
