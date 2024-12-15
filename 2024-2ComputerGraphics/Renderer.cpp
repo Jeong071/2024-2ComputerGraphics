@@ -30,7 +30,7 @@ float enemyLegRotationRate = 90.0f;
 //적 이동,회전
 glm::vec3 enemyPos = glm::vec3(3.5f, 0.5f, -9.0f);
 glm::vec3 enemy2Pos = glm::vec3(-3.5f, 0.5f, -9.0f);
-float enemy1RotationAngle = 30.0f;
+float enemy1RotationAngle = 0.0f;
 float enemy2RotationAngle = 0.0f;
 
 //지형 애니메이션 변수
@@ -149,6 +149,8 @@ void Renderer::CreateShader()
 }
 
 GLvoid Renderer::RenderEnemy(glm::vec3 enemyPos, float angle) {
+	enemyCubes.clear();
+
 	Cube enemyBody;
 	enemyBody.position = glm::vec3(enemyPos.x, enemyPos.y, enemyPos.z);
 	enemyBody.scale = glm::vec3(0.4f * 3 / 4 , 0.2f * 3 / 4, 0.2f * 3 / 4);
@@ -175,7 +177,7 @@ GLvoid Renderer::RenderEnemy(glm::vec3 enemyPos, float angle) {
 	enemyCubes.emplace_back(enemy);
 
 	Cube enemyHead;
-	enemyHead.position = glm::vec3(enemyBody.position.x + 0.0f, enemyBody.position.y + 0.135, enemyBody.position.z - 0.05f);
+	enemyHead.position = glm::vec3(enemyBody.position.x + 0.0f, enemyBody.position.y + 0.135, enemyBody.position.z);
 	enemyHead.scale = glm::vec3(0.15f * 3 / 4, 0.17f * 3 / 4, 0.15f * 3 / 4);
 	enemyHead.rotationAngle = angle;
 	enemyHead.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -189,7 +191,7 @@ GLvoid Renderer::RenderEnemy(glm::vec3 enemyPos, float angle) {
 	enemyHead.DeleteBuffer();
 
 	Cube enemyNose;
-	enemyNose.position = glm::vec3(enemyBody.position.x + 0.0f, enemyBody.position.y + 0.08, enemyBody.position.z - 0.12f);
+	enemyNose.position = glm::vec3(enemyBody.position.x + 0.0f, enemyBody.position.y + 0.08, enemyBody.position.z);
 	enemyNose.scale = glm::vec3(0.04f * 3 / 4, 0.06f * 3 / 4, 0.04f * 3 / 4);
 	enemyNose.rotationAngle = angle;
 	enemyNose.rotationAxis = glm::vec3(0.0f, 1.0f, 0.0f);
@@ -1411,7 +1413,7 @@ GLvoid Renderer::update() {
 		RenderMissile(xPosition, missileYs[i], zPosition);
 	}
 
-	//몬스터 이동
+	//몬스터 팔다리 회전
 	enemyLegRotationAngle += enemyLegRotationRate * deltaTime;
 	if (enemyLegRotationAngle > 30.0f) {
 		enemyLegRotationAngle = 30.0f;
@@ -1430,6 +1432,22 @@ GLvoid Renderer::update() {
 	else if (enemyArmRotationAngle < -30.0f) {
 		enemyArmRotationAngle = -30.0f;
 		enemyArmRotationRate = -enemyArmRotationRate;
+	}
+	
+	//적 to 플레이어 추적 
+	if (gPlayer.GetStage() == 2) {
+		glm::vec3 playerPos = glm::vec3(gPlayer.GetPlayerXPos(), gPlayer.GetPlayerYPos(), gPlayer.GetPlayerZPos());
+		glm::vec3 direction = playerPos - enemyPos;
+		direction.y = 0;
+		float distance = glm::length(direction);
+
+		if (distance > 0) {
+			direction = glm::normalize(direction);
+			enemyPos += direction * deltaTime * 0.5f;
+
+			float angle = atan2(direction.z, direction.x);
+			enemy1RotationAngle = glm::degrees(angle);
+		}
 	}
 }
 
