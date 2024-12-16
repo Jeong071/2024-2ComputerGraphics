@@ -547,7 +547,7 @@ GLvoid Renderer::RenderStage1() {
 	glUniformMatrix4fv(glGetUniformLocation(shaderProgramID, "model"), 1, GL_FALSE, glm::value_ptr(cube12.modelMatrix));
 	//cube12.draw(36, 0);
 	cube12.DeleteBuffer();
-	cubes.emplace_back(cube12);
+	//cubes.emplace_back(cube12);
 	
 	Cube cube13;
 	cube13.position = glm::vec3(cube8.position.x, cube8.position.y + 0.0f, cube8.position.z - 1.75f);

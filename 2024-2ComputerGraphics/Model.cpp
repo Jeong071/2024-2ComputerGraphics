@@ -14,10 +14,10 @@ Model::~Model()
 void Model::ParseObj(const std::string& objFile, const std::string& binFile)
 {
     
-    if (std::filesystem::last_write_time(objFile) > std::filesystem::last_write_time(binFile)) {
-       // std::cout << "bin파일이 최신상태 입니다." << std::endl;
-        return;
-    }
+    //if (std::filesystem::last_write_time(objFile) > std::filesystem::last_write_time(binFile)) {
+    //      std::cout << "bin파일이 최신상태 입니다." << std::endl;
+    //   return;
+    //}
 
     std::ifstream obj(objFile);
     if (!obj.is_open()) {
